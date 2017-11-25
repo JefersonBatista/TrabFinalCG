@@ -1,0 +1,26 @@
+#include "obstaculo.h"
+
+Obstaculo::Obstaculo(GLfloat centroX, GLfloat centroY, GLfloat raio) {
+    this->cx = centroX;
+    this->cy = centroY;
+    this->r = raio;
+}
+
+GLfloat Obstaculo::getX() {
+    return this->cx;
+}
+
+GLfloat Obstaculo::getY() {
+    return this->cy;
+}
+
+GLfloat Obstaculo::getR() {
+    return this->r;
+}
+
+void Obstaculo::desenha() {
+    glPushMatrix();
+        glTranslatef(this->cx, this->cy, 0.0);
+        desenhaCirc(this->r, 0.0, 0.0, 0.0);
+    glPopMatrix();
+}
