@@ -1,4 +1,4 @@
-all: tinyxml2 tempo util obstaculo tiro arena inimigo jogador jogo trab4
+all: tinyxml2 tempo util obstaculo tiro arena inimigo jogador jogo trabFinal
 	@echo "Done."
 
 tinyxml2: tinyxml2.cpp
@@ -28,8 +28,8 @@ jogador: jogador.cpp
 jogo: jogo.cpp
 	g++ -c jogo.cpp
 
-trab4: tinyxml2.o tempo.o util.o obstaculo.o tiro.o arena.o inimigo.o jogador.o jogo.o trab4.cpp
-	g++ -Wall -o trabalhocg trab4.cpp tinyxml2.o tempo.o util.o obstaculo.o tiro.o arena.o inimigo.o jogador.o jogo.o -lGL -lGLU -lglut -lm
+trabFinal: tinyxml2.o tempo.o util.o obstaculo.o tiro.o arena.o inimigo.o jogador.o jogo.o trabFinal.cpp
+	g++ -Wall -o trabalhocg trabFinal.cpp tinyxml2.o tempo.o util.o obstaculo.o tiro.o arena.o inimigo.o jogador.o jogo.o -lGL -lGLU -lglut -lm
 
 clean:
 	@rm -f trabalhocg *.o

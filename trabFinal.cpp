@@ -19,6 +19,16 @@ using namespace std;
 
 #define LEFT_BUTTON 0
 
+//Camera controls (not used yet, except camAngle)
+double camDist=50;
+double camXYAngle=0;
+double camXZAngle=0;
+int toggleCam = 0;
+int camAngle = 90;
+int lastX = 0;
+int lastY = 0;
+int buttonDown=0;
+
 GLfloat prevX;
 
 unsigned long long lastFrame;
@@ -27,6 +37,7 @@ int keyFlags[256];
 
 int ViewingXMin, ViewingXMax;
 int ViewingYMin, ViewingYMax;
+int camPosX, camPosY;
 
 Jogo *jogo;
 Jogador *jogador;
@@ -43,7 +54,7 @@ GLfloat alturaObst;
 void renderScene(void) {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    jogo->desenha(ViewingXMin/2.0, ViewingXMax/2.0, ViewingYMin/2.0, ViewingYMax/2.0);
+    jogo->desenha();
 
     glutSwapBuffers();
 }
@@ -138,15 +149,19 @@ void init(void) {
 
     /* inicializar sistema de viz. */
     glMatrixMode(GL_PROJECTION);
-    glOrtho(ViewingXMin,
+    /* glOrtho(ViewingXMin,
             ViewingXMax,
             ViewingYMin,
             ViewingYMax,
             100,
-            -100);
-    glMatrixMode(GL_MODELVIEW);
+            -100); */
     glLoadIdentity();
-    glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
+    gluPerspective(camAngle, 1.0, (ViewingYMax - ViewingYMin)/8.0, (ViewingYMax - ViewingYMin));
+    gluLookAt(camPosX, camPosY, (ViewingYMax - ViewingYMin)/4.0,
+              camPosX, camPosY, 0,
+               0, 1, 0);
+    glMatrixMode(GL_MODELVIEW);
+    // glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
 }
 
 int main(int argc, char** argv) {
@@ -266,6 +281,8 @@ int main(int argc, char** argv) {
     ViewingXMax = 2*(arenaData[0] + arenaData[2]);
     ViewingYMin = 2*(arenaData[1] - arenaData[2]);
     ViewingYMax = 2*(arenaData[1] + arenaData[2]);
+    camPosX = arenaData[0];
+    camPosY = arenaData[1];
 
     for(int i = 0; i < 256; i++) {
         keyFlags[i] = 0;

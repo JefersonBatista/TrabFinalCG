@@ -11,7 +11,7 @@ Jogo::Jogo(Arena *arena, Jogador *jogador, vector<Inimigo> *inimigos, vector<Obs
     this->status = JOGANDO;
 }
 
-void Jogo::desenha(GLfloat minX, GLfloat maxX, GLfloat minY, GLfloat maxY) {
+void Jogo::desenha() {
     this->arena->desenha();
 
     for(int i = 0; i < obstaculos->size(); i++) {
@@ -28,40 +28,6 @@ void Jogo::desenha(GLfloat minX, GLfloat maxX, GLfloat minY, GLfloat maxY) {
     for(int i = 0; i < inimigos->size(); i++) {
         (*(this->inimigos))[i].desenha();
     }
-
-    char text[20], vitoria[20], derrota[20];
-    sprintf(text, "Pontos: %d", this->pontos);
-
-    glPushMatrix();
-        glTranslatef(minX + 24.0, maxY - 24.0, 0.0);
-        glColor3f(0.75, 0.0, 0.0);
-        glRasterPos2f(maxX - 400.0, 0.0);
-
-        for(int i = 0; i < strlen(text); i++) {
-            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, text[i]);
-        }
-
-        switch (this->status) {
-            case VENCEU:
-                sprintf(vitoria, "Voce venceu!");
-
-                glRasterPos2f(maxX - 400.0, -24.0);
-
-                for(int i = 0; i < strlen(vitoria); i++) {
-                    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, vitoria[i]);
-                }
-                break;
-            case PERDEU:
-                sprintf(derrota, "Voce perdeu!");
-                glRasterPos2f(maxX - 400.0, -24.0);
-
-                for(int i = 0; i < strlen(derrota); i++) {
-                    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, derrota[i]);
-                }
-                break;
-        }
-
-    glPopMatrix();
 }
 
 int Jogo::checarLimites(GLfloat pX, GLfloat pY, GLfloat r, int personagem) {
