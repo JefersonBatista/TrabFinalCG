@@ -15,7 +15,7 @@ void Jogo::desenha() {
     this->arena->desenha();
 
     for(int i = 0; i < obstaculos->size(); i++) {
-        (*(this->obstaculos))[i].desenha();
+        (*(this->obstaculos))[i].desenha(alturaObst);
     }
 
     for(int i = 0; i < tiros->size(); i++) {

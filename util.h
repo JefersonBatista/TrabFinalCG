@@ -51,6 +51,8 @@
 #define FLEE_OUT 4
 
 void desenhaCirc(GLfloat r, GLfloat R, GLfloat G, GLfloat B);
+void desenhaEsfera(GLfloat r, GLfloat R, GLfloat G, GLfloat B);
+void desenhaCilindro(GLfloat r, GLfloat h, GLfloat R, GLfloat G, GLfloat B);
 void desenhaElipse(GLfloat rx, GLfloat ry, GLfloat R, GLfloat G, GLfloat B);
 void desenhaRetangulo(GLfloat lx, GLfloat ly, GLfloat R, GLfloat G, GLfloat B);
 GLfloat distancia(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2);

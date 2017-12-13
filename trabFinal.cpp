@@ -12,8 +12,8 @@
 using namespace tinyxml2;
 using namespace std;
 
-#define WindowWidth 600
-#define WindowHeight 600
+#define WindowWidth 500
+#define WindowHeight 500
 #define MouseMotionToGunRotation 8.0
 #define MouseExitDetection 0.02
 

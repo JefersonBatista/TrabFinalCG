@@ -4,12 +4,12 @@ Jogador::Jogador(GLfloat centroX, GLfloat centroY, GLfloat raio, GLfloat vel, GL
     this->cx = centroX;
     this->cy = centroY;
     this->r = raio;
-    this->ra = raio;
+    this->h = 0.0;
     this->front = 0.0;
     this->gun = 0.0;
     this->vel = vel;
     this->velTiro = velTiro;
-    this->foot = RIGHTFOOT;
+    this->legAngle = 0.0;
     this->status = NORMAL;
     this->lastFootChange = iniciar();
 }
@@ -30,33 +30,36 @@ void Jogador::desenha() {
     GLfloat frontDeg = this->front/(2*M_PI)*360.0;
 
     glPushMatrix();
-        glTranslatef(this->cx, this->cy, 0.0);
+        glTranslatef(this->cx, this->cy, this->h);
         glRotatef(frontDeg, 0.0, 0.0, 1.0);
 
-        // Desenhando os pés
-        switch(this->foot) {
-            case RIGHTFOOT:
-                desenhaRetangulo(this->ra/2.25, this->ra/1.2, 0.0, 0.15, 0.0);
-                desenhaRetangulo(-this->ra/2.25, -this->ra/1.2, 0.0, 0.15, 0.0);
-                break;
-            case LEFTFOOT:
-                desenhaRetangulo(-this->ra/2.25, this->ra/1.2, 0.0, 0.15, 0.0);
-                desenhaRetangulo(this->ra/2.25, -this->ra/1.2, 0.0, 0.15, 0.0);
-        }
+        glPushMatrix();
+            glTranslatef(this->r/2.25, 0.0, 0.0);
+            desenhaCilindro(this->r/2.25, this->r/1.2, 0.0, 0.15, 0.0);
+            glTranslatef(-2.0*(this->r/2.25), 0.0, 0.0);
+            desenhaCilindro(this->r/2.25, this->r/1.2, 0.0, 0.15, 0.0);
+        glPopMatrix();
+
+        // Desenhando o tronco
+        glTranslatef(0.0, 0.0, this->r/1.2);
+        desenhaCilindro(this->r/1.1, this->r/0.5, 0.0, 0.3, 0.3);
 
         // Desenhando o braço
+        glTranslatef(0.0, 0.0, this->r/0.5);
         glPushMatrix();
             GLfloat gunDeg = this->gun/(2*M_PI)*360.0;
-            glTranslatef(this->ra/1.5, 0.0, 0.0);
+            glTranslatef(this->r/1.5, 0.0, 0.0);
             glRotatef(gunDeg, 0.0, 0.0, 1.0);
-            desenhaRetangulo(this->ra/4.0, this->ra, 0.0, 0.5, 0.0);
+            glRotatef(90.0, 1.0, 0.0, 0.0);
+            desenhaCilindro(this->r/4.0, 4.0*this->r, 0.0, 0.5, 0.0);
         glPopMatrix();
 
         // Desenhando ombros
-        desenhaElipse(this->ra, this->ra/3.0, 0.0, 0.6, 0.0);
+        // desenhaElipse(this->r, this->r/3.0, 0.0, 0.6, 0.0);
 
         // Desenhando a cabeça
-        desenhaCirc(this->ra/1.5, 0.0, 1.0, 0.0);
+        glTranslatef(0.0, 0.0, this->r/1.5);
+        desenhaEsfera(this->r/1.5, 0.0, 1.0, 0.0);
     glPopMatrix();
 }
 
@@ -67,7 +70,6 @@ void Jogador::move(Jogo *jogo, GLfloat delta) {
     GLfloat pY = this->cy + incr*cos(this->front);
     GLfloat r = this->r;
 
-    GLfloat altura;
     int checagem = jogo->checarLimites(pX, pY, r, JOGADOR);
 
     // Decide se move o jogador
@@ -75,7 +77,7 @@ void Jogador::move(Jogo *jogo, GLfloat delta) {
         case CHAO:
             this->cx = pX;
             this->cy = pY;
-            this->toogleFoot();
+            this->changeLegAngle();
             if(this->status == PLATAFORMA) {
                 this->alturaInicTransicao = jogo->getAlturaObst();
                 this->inicTransicao = iniciar();
@@ -87,27 +89,27 @@ void Jogador::move(Jogo *jogo, GLfloat delta) {
                 case NORMAL:
                     return;
                 case PULANDO:
-                    altura = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
-                    if (altura >= jogo->getAlturaObst()) {
+                    this->h = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
+                    if (this->h >= jogo->getAlturaObst()) {
                         this->cx = pX;
                         this->cy = pY;
-                        this->toogleFoot();
+                        this->changeLegAngle();
                     } else {
                         return;
                     }
                 case CAINDO:
-                    altura = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
-                    if (altura >= jogo->getAlturaObst()) {
+                    this->h = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
+                    if (this->h >= jogo->getAlturaObst()) {
                         this->cx = pX;
                         this->cy = pY;
-                        this->toogleFoot();
+                        this->changeLegAngle();
                     } else {
                         return;
                     }
                 case PLATAFORMA:
                     this->cx = pX;
                     this->cy = pY;
-                    this->toogleFoot();
+                    this->changeLegAngle();
             }
         default:
             // Caso PROIBIDO, não faça o movimento
@@ -122,18 +124,13 @@ void Jogador::rotate(GLfloat delta) {
     if(this->front > 2*M_PI) this->front -= 2*M_PI;
 }
 
-void Jogador::toogleFoot() {
-    if(tempo_em_ms(this->lastFootChange) < TEMPO_PASSO) {
-        return;
+// TODO: Como controlar os ângulos das pernas?
+void Jogador::changeLegAngle() {
+    unsigned long long tempo = tempo_em_ms(this->lastFootChange);
+    this->legAngle += tempo/100.0;
+    if(this->legAngle > M_PI/4.0) {
+        this->legAngle -= M_PI/2.0;
     }
-    switch (this->foot) {
-        case RIGHTFOOT:
-            this->foot = LEFTFOOT;
-            break;
-        case LEFTFOOT:
-            this->foot = RIGHTFOOT;
-    }
-
     this->lastFootChange = iniciar();
 }
 
@@ -154,7 +151,7 @@ void Jogador::atira(Jogo *jogo) {
         return;
     }
 
-    GLfloat toArm = this->ra/1.5 + this->ra/8.0;
+    GLfloat toArm = this->r/1.5 + this->r/8.0;
     GLfloat angle = this->front;
 
     GLfloat cx = this->cx + toArm*cos(angle);
@@ -181,7 +178,7 @@ void Jogador::pula(Jogo *jogo) {
 
 void Jogador::anima(Jogo *jogo) {
     int checagem;
-    GLfloat altura, mult;
+    GLfloat mult;
     GLfloat tempo;
 
     switch (this->status) {
@@ -194,32 +191,32 @@ void Jogador::anima(Jogo *jogo) {
                 this->inicTransicao = iniciar();
                 this->status = CAINDO;
             }
-            altura = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
+            this->h = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
             break;
         case CAINDO:
             checagem = jogo->checarLimites(this->cx, this->cy, this->r, JOGADOR);
-            altura = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
+            this->h = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
 
             switch (checagem) {
                 case CHAO:
                     // A queda acabou?
-                    if(altura < 0.0) {
-                        altura = 0.0;
+                    if(this->h < 0.0) {
+                        this->h = 0.0;
                         this->status = NORMAL;
                     }
                     break;
                 case OBSTACULO:
                     // A queda acabou?
-                    if(altura < jogo->getAlturaObst()) {
-                        altura = jogo->getAlturaObst();
+                    if(this->h < jogo->getAlturaObst()) {
+                        this->h = jogo->getAlturaObst();
                         this->status = PLATAFORMA;
                     }
             }
     }
 
     // Só é preciso animar se o jogador estiver pulando ou caindo
-    if(this->status != NORMAL && this->status != PLATAFORMA) {
+    /* if(this->status != NORMAL && this->status != PLATAFORMA) {
         mult = zoom(altura);
-        this->ra = mult*this->r;
-    }
+        this->r = mult*this->r;
+    } */
 }

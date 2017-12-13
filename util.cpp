@@ -13,6 +13,46 @@ void desenhaCirc(GLfloat r, GLfloat R, GLfloat G, GLfloat B) {
     glEnd();
 }
 
+void desenhaEsfera(GLfloat r, GLfloat R, GLfloat G, GLfloat B) {
+    glutSolidSphere(r, 100, 16);
+}
+
+void desenhaCilindro(GLfloat r, GLfloat h, GLfloat R, GLfloat G, GLfloat B) {
+    int slices = 100;
+    GLfloat x              = 0.0;
+    GLfloat y              = 0.0;
+    GLfloat angle          = 0.0;
+    GLfloat angle_stepsize = 2.0*M_PI/slices;
+
+    /** Draw the tube */
+    glColor3f(R,G,B);
+    glBegin(GL_QUAD_STRIP);
+    angle = 0.0;
+        while(angle < 2.0*M_PI) {
+            x = r * cos(angle);
+            y = r * sin(angle);
+            glVertex3f(x, y, r);
+            glVertex3f(x, y, 0.0);
+            angle += angle_stepsize;
+        }
+        glVertex3f(r, 0.0, r);
+        glVertex3f(r, 0.0, 0.0);
+    glEnd();
+
+    /** Draw the circle on top of cylinder */
+    glColor3f(R,G,B);
+    glBegin(GL_POLYGON);
+    angle = 0.0;
+        while(angle < 2*M_PI) {
+            x = r * cos(angle);
+            y = r * sin(angle);
+            glVertex3f(x, y, r);
+            angle += angle_stepsize;
+        }
+        glVertex3f(r, 0.0, r);
+    glEnd();
+}
+
 void desenhaElipse(GLfloat rx, GLfloat ry, GLfloat R, GLfloat G, GLfloat B) {
     int points = 200;
     GLfloat angle = 0.0, angleIncr = 2*M_PI/points;
@@ -52,7 +92,7 @@ GLfloat nivel(GLfloat alturaInic, GLfloat tempo, int status) {
             result = alturaInic - tempo;
     }
     // printf("nivel = %f\n", result);
-    return result;
+    return 10.0*result;
 }
 
 GLfloat zoom(GLfloat altura) {

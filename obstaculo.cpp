@@ -18,9 +18,9 @@ GLfloat Obstaculo::getR() {
     return this->r;
 }
 
-void Obstaculo::desenha() {
+void Obstaculo::desenha(GLfloat altura) {
     glPushMatrix();
         glTranslatef(this->cx, this->cy, 0.0);
-        desenhaCirc(this->r, 0.0, 0.0, 0.0);
+        desenhaCilindro(this->r, altura, 0.0, 0.0, 0.0);
     glPopMatrix();
 }
