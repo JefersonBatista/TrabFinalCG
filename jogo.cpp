@@ -23,7 +23,7 @@ void Jogo::desenha() {
     }
 
     if(this->status != PERDEU)
-        this->jogador->desenha();
+        this->jogador->desenha3d();
 
     for(int i = 0; i < inimigos->size(); i++) {
         (*(this->inimigos))[i].desenha();

@@ -60,7 +60,22 @@ void renderScene(void) {
 }
 
 void display(void) {
-    renderScene();
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(camAngle, 1.0, (ViewingYMax - ViewingYMin)/100, (ViewingYMax - ViewingYMin));
+    // glTranslatef(jogador->getX(), jogador->getY(), jogador->getAltura()*2);
+    GLfloat recuo = 3*jogador->getR();
+    GLfloat ang = jogador->getFront();
+    gluLookAt(jogador->getX()+(recuo)*sin(ang), jogador->getY()-(recuo)*cos(ang), jogador->getAltura(),
+        jogador->getX(), jogador->getY(), jogador->getAltura()/2,
+         0, 0, 1);
+     // glRotatef(jogador->getFront(), 0, 0, 1);
+    // gluLookAt(0.0, -3*jogador->getR(), 0.0,
+    //        0.0, 0.0, -jogador->getAltura(),
+    //         0, 0, 1);
+
+  glMatrixMode(GL_MODELVIEW);
+  renderScene();
 }
 
 void mouse(int button, int state, int x, int y) {
@@ -148,17 +163,18 @@ void init(void) {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     /* inicializar sistema de viz. */
-    glMatrixMode(GL_PROJECTION);
+
     /* glOrtho(ViewingXMin,
             ViewingXMax,
             ViewingYMin,
             ViewingYMax,
             100,
             -100); */
+    glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(camAngle, 1.0, (ViewingYMax - ViewingYMin)/8.0, (ViewingYMax - ViewingYMin));
     gluLookAt(camPosX, camPosY, (ViewingYMax - ViewingYMin)/4.0,
-              camPosX, camPosY, 0,
+              jogador->getX(), jogador->getY(), 0,
                0, 1, 0);
     glMatrixMode(GL_MODELVIEW);
     // glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);

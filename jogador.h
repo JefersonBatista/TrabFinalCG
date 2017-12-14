@@ -25,7 +25,10 @@ class Jogador {
         GLfloat getX();
         GLfloat getY();
         GLfloat getR();
-        void desenha();
+        GLfloat getAltura();
+        GLfloat getFront();
+        void desenha3d();
+        void desenha2d();
         void move(Jogo *jogo, GLfloat delta);
         void rotate(GLfloat delta);
         void changeLegAngle();
