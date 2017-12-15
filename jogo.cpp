@@ -14,19 +14,22 @@ Jogo::Jogo(Arena *arena, Jogador *jogador, vector<Inimigo> *inimigos, vector<Obs
 void Jogo::desenha() {
     this->arena->desenha();
 
+    // GLfloat altura = jogador->getAltura()*alturaObst/100.0;
+    GLfloat altura = 20.0;
+    // printf("alturaObst = %f\n", altura);
     for(int i = 0; i < obstaculos->size(); i++) {
-        (*(this->obstaculos))[i].desenha(alturaObst);
+        (*(this->obstaculos))[i].desenha3d(altura);
     }
 
     for(int i = 0; i < tiros->size(); i++) {
-        (*(this->tiros))[i].desenha();
+        (*(this->tiros))[i].desenha3d();
     }
 
     if(this->status != PERDEU)
         this->jogador->desenha3d();
 
     for(int i = 0; i < inimigos->size(); i++) {
-        (*(this->inimigos))[i].desenha();
+        (*(this->inimigos))[i].desenha3d();
     }
 }
 
@@ -212,12 +215,15 @@ void Jogo::moveInimigos(GLfloat transcorrido) {
         x = atual->getX();
         y = atual->getY();
 
+        // printf("movStatus= %d\n", movStatus);
         if(movStatus == FORWARD) {
+            // printf("Voltando ao normal.\n");
             xar = this->arena->getXWhite();
             yar = this->arena->getYWhite();
             rar = this->arena->getRWhite();
             dist = (distancia(x, y, xar, yar) - rar) - r;
 
+            // printf("dist = %f, r = %f\n", dist, r);
             if (dist < r) {
                 atual->setMovStatus(CURVE_IN);
             }

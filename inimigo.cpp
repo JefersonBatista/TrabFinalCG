@@ -4,17 +4,26 @@ Inimigo::Inimigo(GLfloat centroX, GLfloat centroY, GLfloat raio, GLfloat vel, GL
     this->cx = centroX;
     this->cy = centroY;
     this->r = raio;
-    this->ra = raio;
+    this->h = 0.0;
     this->front = 0.0;
     this->gun = 0.0;
     this->vel = vel;
     this->velTiro = velTiro;
     this->freqTiro = freqTiro;
-    this->foot = RIGHTFOOT;
+    this->legAngle = 0.0;
     this->status = NORMAL;
     this->lastFootChange = iniciar();
     this->lastShoot = iniciar();
     this->movStatus = FORWARD;
+
+    // Dimensões do corpo do inimigo
+    this->legRM = 0.5;
+    this->legHM = 1.5;
+    this->bodyRM = 1.0;
+    this->bodyHM = 1.0;
+    this->armRM = 0.3;
+    this->armHM = 1.5;
+    this->headM = 1.0;
 }
 
 GLfloat Inimigo::getX() {
@@ -37,7 +46,7 @@ void Inimigo::setMovStatus(int newMovStatus) {
     this->movStatus = newMovStatus;
 }
 
-void Inimigo::desenha() {
+void Inimigo::desenha2d() {
     GLfloat frontDeg = this->front/(2*M_PI)*360.0;
 
     glPushMatrix();
@@ -45,29 +54,68 @@ void Inimigo::desenha() {
         glRotatef(frontDeg, 0.0, 0.0, 1.0);
 
         // Desenhando os pés
-        switch(this->foot) {
+        /* switch(this->foot) {
             case RIGHTFOOT:
-                desenhaRetangulo(this->ra/2.25, this->ra/1.2, 0.15, 0.0, 0.0);
-                desenhaRetangulo(-this->ra/2.25, -this->ra/1.2, 0.15, 0.0, 0.0);
+                desenhaRetangulo(this->r/2.25, this->r/1.2, 0.15, 0.0, 0.0);
+                desenhaRetangulo(-this->r/2.25, -this->r/1.2, 0.15, 0.0, 0.0);
                 break;
             case LEFTFOOT:
-                desenhaRetangulo(-this->ra/2.25, this->ra/1.2, 0.15, 0.0, 0.0);
-                desenhaRetangulo(this->ra/2.25, -this->ra/1.2, 0.15, 0.0, 0.0);
-        }
+                desenhaRetangulo(-this->r/2.25, this->r/1.2, 0.15, 0.0, 0.0);
+                desenhaRetangulo(this->r/2.25, -this->r/1.2, 0.15, 0.0, 0.0);
+        } */
 
         // Desenhando o braço
         glPushMatrix();
             GLfloat gunDeg = this->gun/(2*M_PI)*360.0;
-            glTranslatef(this->ra/1.5, 0.0, 0.0);
+            glTranslatef(this->r/1.5, 0.0, 0.0);
             glRotatef(gunDeg, 0.0, 0.0, 1.0);
-            desenhaRetangulo(this->ra/4.0, this->ra, 0.5, 0.0, 0.0);
+            desenhaRetangulo(this->r/4.0, this->r, 0.5, 0.0, 0.0);
         glPopMatrix();
 
         // Desenhando ombros
-        desenhaElipse(this->ra, this->ra/3.0, 0.6, 0.0, 0.0);
+        desenhaElipse(this->r, this->r/3.0, 0.6, 0.0, 0.0);
 
         // Desenhando a cabeça
-        desenhaCirc(this->ra/1.5, 1.0, 0.0, 0.0);
+        desenhaCirc(this->r/1.5, 1.0, 0.0, 0.0);
+    glPopMatrix();
+}
+
+void Inimigo::desenha3d() {
+    // printf("cx = %f, cy = %f, r = %f, h = %f\n", cx, cy, r, h);
+    GLfloat frontDeg = front/(2*M_PI)*360.0;
+
+    glPushMatrix();
+        glTranslatef(cx, cy, h);
+        glRotatef(frontDeg, 0.0, 0.0, 1.0);
+
+        // Desenhando as pernas
+        glPushMatrix();
+            glTranslatef(r*legRM, 0.0, 0.0);
+            desenhaCilindro(r*legRM, r*legHM, 0.15, 0.0, 0.0);
+            glTranslatef(-2.0*(r*legRM), 0.0, 0.0);
+            desenhaCilindro(r*legRM, r*legHM, 0.15, 0.0, 0.0);
+        glPopMatrix();
+
+        // Desenhando o tronco
+        glTranslatef(0.0, 0.0, r*legHM);
+        desenhaCilindro(r*bodyRM, r*bodyHM, 0.3, 0.0, 0.3);
+
+        // Desenhando o braço
+        glTranslatef(0.0, 0.0, r*bodyHM);
+        glPushMatrix();
+            GLfloat gunDeg = this->gun/(2*M_PI)*360.0;
+            glTranslatef(r*bodyRM, 0.0, 0.0);
+            glRotatef(gunDeg, 0.0, 0.0, 1.0);
+            glRotatef(-90.0, 1.0, 0.0, 0.0);
+            desenhaCilindro(r*armRM, r*armHM, 0.5, 0.0, 0.0);
+        glPopMatrix();
+
+        // Desenhando ombros
+        // desenhaElipse(this->r, this->r/3.0, 0.0, 0.6, 0.0);
+
+        // Desenhando a cabeça
+        glTranslatef(0.0, 0.0, r*headM);
+        desenhaEsfera(r*headM, 1.0, 0.0, 0.0);
     glPopMatrix();
 }
 
@@ -78,15 +126,14 @@ void Inimigo::move(Jogo *jogo, GLfloat delta, int num) {
     GLfloat pY = this->cy + incr*cos(this->front);
     GLfloat r = this->r;
 
-    GLfloat altura;
     int checagem = jogo->checarInimigos(pX, pY, r, num);
 
-    // Decide se move o jogador
+    // Decide se move o inimigo
     switch(checagem) {
         case CHAO:
             this->cx = pX;
             this->cy = pY;
-            this->toogleFoot();
+            this->changeLegAngle();
             if(this->status == PLATAFORMA) {
                 this->alturaInicTransicao = jogo->getAlturaObst();
                 this->inicTransicao = iniciar();
@@ -98,27 +145,27 @@ void Inimigo::move(Jogo *jogo, GLfloat delta, int num) {
                 case NORMAL:
                     return;
                 case PULANDO:
-                    altura = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
-                    if (altura >= jogo->getAlturaObst()) {
+                    this->h = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
+                    if (this->h >= jogo->getAlturaObst()) {
                         this->cx = pX;
                         this->cy = pY;
-                        this->toogleFoot();
+                        this->changeLegAngle();
                     } else {
                         return;
                     }
                 case CAINDO:
-                    altura = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
-                    if (altura >= jogo->getAlturaObst()) {
+                    this->h = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
+                    if (this->h >= jogo->getAlturaObst()) {
                         this->cx = pX;
                         this->cy = pY;
-                        this->toogleFoot();
+                        this->changeLegAngle();
                     } else {
                         return;
                     }
                 case PLATAFORMA:
                     this->cx = pX;
                     this->cy = pY;
-                    this->toogleFoot();
+                    this->changeLegAngle();
             }
         default:
             // Caso PROIBIDO, não faça o movimento
@@ -127,24 +174,20 @@ void Inimigo::move(Jogo *jogo, GLfloat delta, int num) {
 }
 
 void Inimigo::rotate(GLfloat delta) {
+    // printf("Uai, sô!\n");
     GLfloat angleIncr = this->vel*delta/MOTION_TO_ROTATION;
 
     this->front += angleIncr;
     if(this->front > 2*M_PI) this->front -= 2*M_PI;
 }
 
-void Inimigo::toogleFoot() {
-    if(tempo_em_ms(this->lastFootChange) < TEMPO_PASSO) {
-        return;
+// TODO: Como controlar os ângulos das pernas?
+void Inimigo::changeLegAngle() {
+    unsigned long long tempo = tempo_em_ms(this->lastFootChange);
+    this->legAngle += tempo/100.0;
+    if(this->legAngle > M_PI/4.0) {
+        this->legAngle -= M_PI/2.0;
     }
-    switch (this->foot) {
-        case RIGHTFOOT:
-            this->foot = LEFTFOOT;
-            break;
-        case LEFTFOOT:
-            this->foot = RIGHTFOOT;
-    }
-
     this->lastFootChange = iniciar();
 }
 
@@ -165,34 +208,35 @@ void Inimigo::atira(Jogo *jogo) {
         return;
     }
 
-    GLfloat toArm = this->ra/1.5 + this->ra/8.0;
+    GLfloat toArm = this->r/1.5 + this->r/8.0;
     GLfloat angle = this->front;
 
     GLfloat cx = this->cx + toArm*cos(angle);
     GLfloat cy = this->cy + toArm*sin(angle);
+    GLfloat h = r*legHM + r*bodyHM;
     GLfloat vel = this->velTiro;
     GLfloat dir = this->front + this->gun;
 
-    jogo->adicionarTiro(Tiro(cx, cy, vel, dir, INIMIGO));
+    jogo->adicionarTiro(Tiro(cx, cy, h, vel, dir, INIMIGO));
 }
 
 void Inimigo::pula(Jogo *jogo) {
     switch (this->status) {
         case NORMAL:
-            alturaInicTransicao = 0.0;
-            inicTransicao = iniciar();
+            this->alturaInicTransicao = 0.0;
+            this->inicTransicao = iniciar();
             this->status = PULANDO;
             break;
         case PLATAFORMA:
-            alturaInicTransicao = jogo->getAlturaObst();
-            inicTransicao = iniciar();
+            this->alturaInicTransicao = jogo->getAlturaObst();
+            this->inicTransicao = iniciar();
             this->status = PULANDO;
     }
 }
 
 void Inimigo::anima(Jogo *jogo) {
     int checagem;
-    GLfloat altura, mult;
+    GLfloat mult;
     GLfloat tempo;
 
     switch (this->status) {
@@ -205,34 +249,34 @@ void Inimigo::anima(Jogo *jogo) {
                 this->inicTransicao = iniciar();
                 this->status = CAINDO;
             }
-            altura = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
+            this->h = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
             break;
         case CAINDO:
             checagem = jogo->checarLimites(this->cx, this->cy, this->r, INIMIGO);
-            altura = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
+            this->h = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
 
             switch (checagem) {
                 case CHAO:
                     // A queda acabou?
-                    if(altura < 0.0) {
-                        altura = 0.0;
+                    if(this->h < 0.0) {
+                        this->h = 0.0;
                         this->status = NORMAL;
                     }
                     break;
                 case OBSTACULO:
                     // A queda acabou?
-                    if(altura < jogo->getAlturaObst()) {
-                        altura = jogo->getAlturaObst();
+                    if(this->h < jogo->getAlturaObst()) {
+                        this->h = jogo->getAlturaObst();
                         this->status = PLATAFORMA;
                     }
             }
     }
 
     // Só é preciso animar se o inimigo estiver pulando ou caindo
-    if(this->status != NORMAL && this->status != PLATAFORMA) {
-        mult = zoom(altura);
-        this->ra = mult*this->r;
-    }
+    /* if(this->status != NORMAL && this->status != PLATAFORMA) {
+        mult = zoom(this->h);
+        this->r = mult*this->r;
+    } */
 
     GLfloat tempoPorTiro = 1.0/this->freqTiro;
     if(tempo_em_s(this->lastShoot) > tempoPorTiro) {

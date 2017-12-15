@@ -12,6 +12,15 @@ Jogador::Jogador(GLfloat centroX, GLfloat centroY, GLfloat raio, GLfloat vel, GL
     this->legAngle = 0.0;
     this->status = NORMAL;
     this->lastFootChange = iniciar();
+
+    // Dimensões do corpo do jogador
+    this->legRM = 0.5;
+    this->legHM = 1.5;
+    this->bodyRM = 1.0;
+    this->bodyHM = 1.0;
+    this->armRM = 0.3;
+    this->armHM = 1.5;
+    this->headM = 1.0;
 }
 
 GLfloat Jogador::getX() {
@@ -26,84 +35,83 @@ GLfloat Jogador::getR() {
     return this->r;
 }
 
-// void Jogador::desenha2d() {
-//     GLfloat frontDeg = this->front/(2*M_PI)*360.0;
-//
-//     glPushMatrix();
-//         glTranslatef(this->cx, this->cy, 0.0);
-//         glRotatef(frontDeg, 0.0, 0.0, 1.0);
-//
-//         // Desenhando os pés
-//         switch(this->foot) {
-//             case RIGHTFOOT:
-//                 desenhaRetangulo(this->ra/2.25, this->ra/1.2, 0.15, 0.0, 0.0);
-//                 desenhaRetangulo(-this->ra/2.25, -this->ra/1.2, 0.15, 0.0, 0.0);
-//                 break;
-//             case LEFTFOOT:
-//                 desenhaRetangulo(-this->ra/2.25, this->ra/1.2, 0.15, 0.0, 0.0);
-//                 desenhaRetangulo(this->ra/2.25, -this->ra/1.2, 0.15, 0.0, 0.0);
-//         }
-//
-//         // Desenhando o braço
-//         glPushMatrix();
-//             GLfloat gunDeg = this->gun/(2*M_PI)*360.0;
-//             glTranslatef(this->ra/1.5, 0.0, 0.0);
-//             glRotatef(gunDeg, 0.0, 0.0, 1.0);
-//             desenhaRetangulo(this->ra/4.0, this->ra, 0.5, 0.0, 0.0);
-//         glPopMatrix();
-//
-//         // Desenhando ombros
-//         desenhaElipse(this->ra, this->ra/3.0, 0.6, 0.0, 0.0);
-//
-//         // Desenhando a cabeça
-//         desenhaCirc(this->ra/1.5, 1.0, 0.0, 0.0);
-//     glPopMatrix();
-// }
-
-GLfloat Jogador::getAltura(){
-    return this->r/0.5 + this->r/0.5 + 2*this->r/1.5;
-}
-
-GLfloat Jogador::getFront(){
-    return this->front;
-}
-
-void Jogador::desenha3d() {
+void Jogador::desenha2d() {
     GLfloat frontDeg = this->front/(2*M_PI)*360.0;
 
     glPushMatrix();
-        glTranslatef(this->cx, this->cy, this->h);
+        glTranslatef(this->cx, this->cy, 0.0);
         glRotatef(frontDeg, 0.0, 0.0, 1.0);
 
-        // Desenhando as pernas
-        glPushMatrix();
-            glTranslatef(this->r/2.25, 0.0, 0.0);
-            desenhaCilindro(this->r/2.25, this->r/0.5, 0.0, 0.15, 0.0);
-            glTranslatef(-2.0*(this->r/2.25), 0.0, 0.0);
-            desenhaCilindro(this->r/2.25, this->r/0.5, 0.0, 0.15, 0.0);
-        glPopMatrix();
+        // Desenhando os pés
+        /* switch(this->foot) {
+            case RIGHTFOOT:
+                desenhaRetangulo(this->r/2.25, this->r/1.2, 0.15, 0.0, 0.0);
+                desenhaRetangulo(-this->r/2.25, -this->r/1.2, 0.15, 0.0, 0.0);
+                break;
+            case LEFTFOOT:
+                desenhaRetangulo(-this->r/2.25, this->r/1.2, 0.15, 0.0, 0.0);
+                desenhaRetangulo(this->r/2.25, -this->r/1.2, 0.15, 0.0, 0.0);
+        } */
 
-        // Desenhando o tronco
-        glTranslatef(0.0, 0.0, this->r/0.5);
-        desenhaCilindro(this->r/1.1, this->r/0.5, 0.0, 0.3, 0.3);
-
-        glTranslatef(0.0, 0.0, this->r/0.5);
         // Desenhando o braço
-        /* glTranslatef(0.0, 0.0, this->r/0.5);
         glPushMatrix();
             GLfloat gunDeg = this->gun/(2*M_PI)*360.0;
             glTranslatef(this->r/1.5, 0.0, 0.0);
             glRotatef(gunDeg, 0.0, 0.0, 1.0);
-            glRotatef(90.0, 1.0, 0.0, 0.0);
-            desenhaCilindro(this->r/4.0, 4.0*this->r, 0.0, 0.5, 0.0);
-        glPopMatrix(); */
+            desenhaRetangulo(this->r/4.0, this->r, 0.5, 0.0, 0.0);
+        glPopMatrix();
+
+        // Desenhando ombros
+        desenhaElipse(this->r, this->r/3.0, 0.6, 0.0, 0.0);
+
+        // Desenhando a cabeça
+        desenhaCirc(this->r/1.5, 1.0, 0.0, 0.0);
+    glPopMatrix();
+}
+
+GLfloat Jogador::getAltura(){
+    return r*legHM + r*bodyHM + 2*r*headM;
+}
+
+GLfloat Jogador::getFront() {
+    return this->front;
+}
+
+void Jogador::desenha3d() {
+    GLfloat frontDeg = front/(2*M_PI)*360.0;
+
+    glPushMatrix();
+        glTranslatef(cx, cy, h);
+        glRotatef(frontDeg, 0.0, 0.0, 1.0);
+
+        // Desenhando as pernas
+        glPushMatrix();
+            glTranslatef(r*legRM, 0.0, 0.0);
+            desenhaCilindro(r*legRM, r*legHM, 0.0, 0.15, 0.0);
+            glTranslatef(-2.0*(r*legRM), 0.0, 0.0);
+            desenhaCilindro(r*legRM, r*legHM, 0.0, 0.15, 0.0);
+        glPopMatrix();
+
+        // Desenhando o tronco
+        glTranslatef(0.0, 0.0, r*legHM);
+        desenhaCilindro(r*bodyRM, r*bodyHM, 0.0, 0.3, 0.3);
+
+        // Desenhando o braço
+        glTranslatef(0.0, 0.0, r*bodyHM);
+        glPushMatrix();
+            GLfloat gunDeg = this->gun/(2*M_PI)*360.0;
+            glTranslatef(r*bodyRM, 0.0, 0.0);
+            glRotatef(gunDeg, 0.0, 0.0, 1.0);
+            glRotatef(-90.0, 1.0, 0.0, 0.0);
+            desenhaCilindro(r*armRM, r*armHM, 0.0, 0.5, 0.0);
+        glPopMatrix();
 
         // Desenhando ombros
         // desenhaElipse(this->r, this->r/3.0, 0.0, 0.6, 0.0);
 
         // Desenhando a cabeça
-        glTranslatef(0.0, 0.0, this->r/1.5);
-        desenhaEsfera(this->r/1.5, 0.0, 1.0, 0.0);
+        glTranslatef(0.0, 0.0, r*headM);
+        desenhaEsfera(r*headM, 0.0, 1.0, 0.0);
     glPopMatrix();
 }
 
@@ -200,10 +208,11 @@ void Jogador::atira(Jogo *jogo) {
 
     GLfloat cx = this->cx + toArm*cos(angle);
     GLfloat cy = this->cy + toArm*sin(angle);
+    GLfloat h = r*legHM + r*bodyHM;
     GLfloat vel = this->velTiro;
     GLfloat dir = this->front + this->gun;
 
-    jogo->adicionarTiro(Tiro(cx, cy, vel, dir, JOGADOR));
+    jogo->adicionarTiro(Tiro(cx, cy, h, vel, dir, JOGADOR));
 }
 
 void Jogador::pula(Jogo *jogo) {

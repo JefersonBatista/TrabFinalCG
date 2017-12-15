@@ -13,10 +13,11 @@
 class Jogo;
 
 class Inimigo {
-    GLfloat cx, cy, r, ra, front, gun, vel, velTiro, freqTiro;
+    GLfloat cx, cy, r, h, front, gun, vel, velTiro, freqTiro;
+    GLfloat legRM, legHM, bodyRM, bodyHM, armRM, armHM, headM;
     unsigned long long inicTransicao;
     GLfloat alturaInicTransicao;
-    int foot;
+    GLfloat legAngle;
     int status;
     unsigned long long lastFootChange;
     unsigned long long lastShoot;
@@ -27,12 +28,13 @@ class Inimigo {
         GLfloat getX();
         GLfloat getY();
         GLfloat getR();
+        void desenha2d();
+        void desenha3d();
         int getMovStatus();
         void setMovStatus(int newMovStatus);
-        void desenha();
         void move(Jogo *jogo, GLfloat delta, int num);
         void rotate(GLfloat delta);
-        void toogleFoot();
+        void changeLegAngle();
         void moveArma(GLfloat angle);
         void atira(Jogo *jogo);
         void pula(Jogo *jogo);

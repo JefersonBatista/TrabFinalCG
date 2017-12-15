@@ -9,17 +9,18 @@
 #include "util.h"
 
 class Tiro {
-    GLfloat inicX, inicY, cx, cy, vel, dir;
+    GLfloat inicX, inicY, inicH, cx, cy, h, vel, dir;
     int dono;
     unsigned long long inic;
 
     public:
-        Tiro(GLfloat cx, GLfloat cy, GLfloat vel, GLfloat dir, int dono);
-        void desenha();
+        Tiro(GLfloat cx, GLfloat cy, GLfloat h, GLfloat vel, GLfloat dir, int dono);
+        void desenha3d();
         GLfloat nextX();
         GLfloat nextY();
         void setX(GLfloat x);
         void setY(GLfloat y);
+        void setH(GLfloat h);
         int getDono();
         unsigned long long tempo();
 };

@@ -62,7 +62,7 @@ void renderScene(void) {
 void display(void) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(camAngle, 1.0, (ViewingYMax - ViewingYMin)/100, (ViewingYMax - ViewingYMin));
+    gluPerspective(camAngle, 1.0, (ViewingYMax - ViewingYMin)/100, (ViewingYMax - ViewingYMin)*5.0);
     // glTranslatef(jogador->getX(), jogador->getY(), jogador->getAltura()*2);
     GLfloat recuo = 3*jogador->getR();
     GLfloat ang = jogador->getFront();

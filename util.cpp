@@ -31,11 +31,11 @@ void desenhaCilindro(GLfloat r, GLfloat h, GLfloat R, GLfloat G, GLfloat B) {
         while(angle < 2.0*M_PI) {
             x = r * cos(angle);
             y = r * sin(angle);
-            glVertex3f(x, y, r);
+            glVertex3f(x, y, h);
             glVertex3f(x, y, 0.0);
             angle += angle_stepsize;
         }
-        glVertex3f(r, 0.0, r);
+        glVertex3f(r, 0.0, h);
         glVertex3f(r, 0.0, 0.0);
     glEnd();
 
@@ -46,10 +46,10 @@ void desenhaCilindro(GLfloat r, GLfloat h, GLfloat R, GLfloat G, GLfloat B) {
         while(angle < 2*M_PI) {
             x = r * cos(angle);
             y = r * sin(angle);
-            glVertex3f(x, y, r);
+            glVertex3f(x, y, h);
             angle += angle_stepsize;
         }
-        glVertex3f(r, 0.0, r);
+        glVertex3f(r, 0.0, h);
     glEnd();
 }
 

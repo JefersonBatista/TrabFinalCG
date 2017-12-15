@@ -14,6 +14,7 @@ class Jogo;
 
 class Jogador {
     GLfloat cx, cy, r, h, front, gun, vel, velTiro;
+    GLfloat legRM, legHM, bodyRM, bodyHM, armRM, armHM, headM;
     unsigned long long inicTransicao;
     GLfloat alturaInicTransicao;
     GLfloat legAngle;
@@ -27,8 +28,8 @@ class Jogador {
         GLfloat getR();
         GLfloat getAltura();
         GLfloat getFront();
-        void desenha3d();
         void desenha2d();
+        void desenha3d();
         void move(Jogo *jogo, GLfloat delta);
         void rotate(GLfloat delta);
         void changeLegAngle();
