@@ -1,35 +1,33 @@
-all: tinyxml2 tempo util obstaculo tiro arena inimigo jogador jogo trabFinal
+all: tinyxml2.o tempo.o util.o obstaculo.o tiro.o arena.o inimigo.o jogador.o jogo.o
+	g++ -Wall -o trabalhocg trabFinal.cpp tinyxml2.o tempo.o util.o obstaculo.o tiro.o arena.o inimigo.o jogador.o jogo.o -lGL -lGLU -lglut -lm
 	@echo "Done."
 
-tinyxml2: tinyxml2.cpp
+tinyxml2.o: tinyxml2.cpp tinyxml2.h
 	g++ -c tinyxml2.cpp
 
-tempo: tempo.cpp
+tempo.o: tempo.cpp tempo.h
 	g++ -c tempo.cpp
 
-util: util.cpp
+util.o: util.cpp util.h
 	g++ -c util.cpp
 
-obstaculo: obstaculo.cpp
+obstaculo.o: obstaculo.cpp obstaculo.h
 	g++ -c obstaculo.cpp
 
-tiro: tiro.cpp
+tiro.o: tiro.cpp tiro.h
 	g++ -c tiro.cpp
 
-arena: arena.cpp
+arena.o: arena.cpp arena.h
 	g++ -c arena.cpp
 
-inimigo: inimigo.cpp
+inimigo.o: inimigo.cpp inimigo.h
 	g++ -c inimigo.cpp
 
-jogador: jogador.cpp
+jogador.o: jogador.cpp jogador.h
 	g++ -c jogador.cpp
 
-jogo: jogo.cpp
+jogo.o: jogo.cpp jogo.h
 	g++ -c jogo.cpp
-
-trabFinal: tinyxml2.o tempo.o util.o obstaculo.o tiro.o arena.o inimigo.o jogador.o jogo.o trabFinal.cpp
-	g++ -Wall -o trabalhocg trabFinal.cpp tinyxml2.o tempo.o util.o obstaculo.o tiro.o arena.o inimigo.o jogador.o jogo.o -lGL -lGLU -lglut -lm
 
 clean:
 	@rm -f trabalhocg *.o

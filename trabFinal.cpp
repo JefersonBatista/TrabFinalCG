@@ -75,15 +75,23 @@ void display(void) {
     }
     if (toggleCam == 2){
         GLfloat recuo = 5*jogador->getR();
-        GLfloat ang = jogador->getFront();
+        GLfloat angH = jogador->getFront();
+        GLfloat angV = camVAngle*M_PI/180;
+        angH -= camHAngle*M_PI/180;
+
         // glRotatef(camHAngle,0,1,0);
-        gluLookAt(jogador->getX()+(recuo)*sin(ang), jogador->getY()-(recuo)*cos(ang), jogador->getAltura()/2,
-            jogador->getX(), jogador->getY(), jogador->getAltura()/2,
+        // printf("%f\n", camHAngle);
+
+        GLfloat Xcam = jogador->getX()+(recuo)*sin(angH)*cos(angV);
+        GLfloat Ycam = jogador->getY()-(recuo)*cos(angH)*cos(angV);
+        GLfloat Hcam = jogador->getAltura()*1.5+jogador->getAltura()*1.5*sin(angV);
+        gluLookAt(Xcam, Ycam, Hcam,
+            jogador->getX(), jogador->getY(), jogador->getAltura()/2, // mira no meio do tronco do jogador
             0, 0, 1);
     }
 
-  glMatrixMode(GL_MODELVIEW);
-  renderScene();
+    glMatrixMode(GL_MODELVIEW);
+    renderScene();
 }
 
 void mouse(int button, int state, int x, int y) {
@@ -140,11 +148,12 @@ void mouseMotion(int x, int y) {
     }
 
     if (buttonDown){
-        camHAngle += x - lastX;
-        camVAngle += y - lastY;
-
-        camHAngle = (int)camHAngle % 360;
-        camVAngle = (int)camVAngle % 360;
+        if((camHAngle + x - lastX) > -180 && (camHAngle + x - lastX) < 180 ){
+            camHAngle += x - lastX;
+        }
+        if((camVAngle + y - lastY) > -90 && (camVAngle + y - lastY) < 90 ){
+            camVAngle += y - lastY;
+        }
     }
     lastX = x;
     lastY = y;
