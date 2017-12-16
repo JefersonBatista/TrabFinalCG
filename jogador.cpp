@@ -100,8 +100,11 @@ void Jogador::desenha3d() {
         glTranslatef(0.0, 0.0, r*bodyHM);
         glPushMatrix();
             GLfloat gunDeg = this->gun/(2*M_PI)*360.0;
+            GLfloat gunDegV = this->gunV/(2*M_PI)*360.0;
+
             glTranslatef(r*bodyRM, 0.0, 0.0);
             glRotatef(gunDeg, 0.0, 0.0, 1.0);
+            glRotatef(gunDegV, 1.0, 0.0, 0.0);
             glRotatef(-90.0, 1.0, 0.0, 0.0);
             desenhaCilindro(r*armRM, r*armHM, 0.0, 0.5, 0.0);
         glPopMatrix();
@@ -197,6 +200,17 @@ void Jogador::moveArma(GLfloat angle) {
     }
 }
 
+void Jogador::moveArmaV(GLfloat angle) {
+    GLfloat limit = (45.0/360.0)*2*M_PI;
+
+    if(this->gunV + angle > limit || this->gunV + angle < -limit) {
+        // Limite do movimento do braço alcançado, não mover
+        return;
+    } else {
+        this->gunV += angle;
+    }
+}
+
 void Jogador::atira(Jogo *jogo) {
     // Não atirar pulando ou em cima de plataforma
     if(this->status != NORMAL) {
@@ -211,8 +225,9 @@ void Jogador::atira(Jogo *jogo) {
     GLfloat h = r*legHM + r*bodyHM;
     GLfloat vel = this->velTiro;
     GLfloat dir = this->front + this->gun;
+    GLfloat dirV = this->gunV;
 
-    jogo->adicionarTiro(Tiro(cx, cy, h, vel, dir, JOGADOR));
+    jogo->adicionarTiro(Tiro(cx, cy, h, vel, dir, dirV, JOGADOR));
 }
 
 void Jogador::pula(Jogo *jogo) {

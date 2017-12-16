@@ -12,24 +12,25 @@
 using namespace tinyxml2;
 using namespace std;
 
-#define WindowWidth 500
-#define WindowHeight 500
+#define WindowWidth 1000
+#define WindowHeight 1000
 #define MouseMotionToGunRotation 8.0
 #define MouseExitDetection 0.02
 
 #define LEFT_BUTTON 0
+#define RIGHT_BUTTON 2
 
 //Camera controls (not used yet, except camAngle)
 double camDist=50;
-double camXYAngle=0;
-double camXZAngle=0;
-int toggleCam = 0;
+double camHAngle=0;
+double camVAngle=0;
+int toggleCam = 2;
 int camAngle = 90;
 int lastX = 0;
 int lastY = 0;
 int buttonDown=0;
 
-GLfloat prevX;
+GLfloat prevX, prevY;
 
 unsigned long long lastFrame;
 GLfloat transcorrido;
@@ -64,15 +65,22 @@ void display(void) {
     glLoadIdentity();
     gluPerspective(camAngle, 1.0, (ViewingYMax - ViewingYMin)/100, (ViewingYMax - ViewingYMin)*5.0);
     // glTranslatef(jogador->getX(), jogador->getY(), jogador->getAltura()*2);
-    GLfloat recuo = 3*jogador->getR();
-    GLfloat ang = jogador->getFront();
-    gluLookAt(jogador->getX()+(recuo)*sin(ang), jogador->getY()-(recuo)*cos(ang), jogador->getAltura(),
-        jogador->getX(), jogador->getY(), jogador->getAltura()/2,
-         0, 0, 1);
-     // glRotatef(jogador->getFront(), 0, 0, 1);
-    // gluLookAt(0.0, -3*jogador->getR(), 0.0,
-    //        0.0, 0.0, -jogador->getAltura(),
+    if (toggleCam == 1){
+        // colocar camera sobre a arma
+    //     GLfloat recuo = jogador->getR();
+    //     GLfloat ang = jogador->getFront();
+    //     gluLookAt(jogador->getX()+(recuo)*sin(ang), jogador->getY()-(recuo)*cos(ang), jogador->getAltura()/2,
+    //         jogador->getX(), jogador->getY(), jogador->getAltura()/2,
     //         0, 0, 1);
+    }
+    if (toggleCam == 2){
+        GLfloat recuo = 5*jogador->getR();
+        GLfloat ang = jogador->getFront();
+        // glRotatef(camHAngle,0,1,0);
+        gluLookAt(jogador->getX()+(recuo)*sin(ang), jogador->getY()-(recuo)*cos(ang), jogador->getAltura()/2,
+            jogador->getX(), jogador->getY(), jogador->getAltura()/2,
+            0, 0, 1);
+    }
 
   glMatrixMode(GL_MODELVIEW);
   renderScene();
@@ -82,22 +90,27 @@ void mouse(int button, int state, int x, int y) {
     if(!state && button == LEFT_BUTTON) {
         jogador->atira(jogo);
     }
+    if(!state && button == RIGHT_BUTTON) {
+        buttonDown = 1;
+    }else{
+        buttonDown = 0;
+    }
 }
 
 void mouseMotion(int x, int y) {
     GLfloat gx = (GLfloat) x/WindowWidth;
+    GLfloat gy = (GLfloat) y/WindowWidth;
     GLfloat angle;
+    GLfloat angleV;
 
     // Se a posição do mouse ainda não foi inicializada
     if(prevX < 0.0) {
         prevX = gx;
     }
-
     // Caso em que o mouse retorna à tela de jogo
     else if(gx - prevX > MouseExitDetection || gx - prevX < -MouseExitDetection) {
         prevX = gx;
     }
-
     // Movendo o braço do jogador
     else {
         /* Rotação por um ângulo positivo, caso o movimento do mouse
@@ -108,10 +121,45 @@ void mouseMotion(int x, int y) {
         prevX = gx;
     }
 
+    // Se a posição do mouse ainda não foi inicializada
+    if(prevY < 0.0) {
+        prevY = gy;
+    }
+    // Caso em que o mouse retorna à tela de jogo
+    else if(gy - prevY > MouseExitDetection || gy - prevY < -MouseExitDetection) {
+        prevY = gy;
+    }
+    // Movendo o braço do jogador
+    else {
+        /* Rotação por um ângulo positivo, caso o movimento do mouse
+         * seja para a esquerda, e negativo, caso seja para a direita.
+         */
+        angleV = -MouseMotionToGunRotation*(gy - prevY);
+        jogador->moveArmaV(angleV);
+        prevY = gy;
+    }
+
+    if (buttonDown){
+        camHAngle += x - lastX;
+        camVAngle += y - lastY;
+
+        camHAngle = (int)camHAngle % 360;
+        camVAngle = (int)camVAngle % 360;
+    }
+    lastX = x;
+    lastY = y;
+
     glutPostRedisplay();
 }
 
 void keyPress(unsigned char key, int x, int y) {
+
+    if(key == '1') {
+        toggleCam = 1;
+    }
+    if(key == '2') {
+        toggleCam = 2;
+    }
     if(key == 'p') {
         jogador->pula(jogo);
     }

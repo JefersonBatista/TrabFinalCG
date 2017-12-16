@@ -122,17 +122,19 @@ void Jogo::anima() {
     }
 
     // Animando os tiros
-    GLfloat pX, pY;
+    GLfloat pX, pY, pH;
     int numTiros = this->tiros->size();
     for(int i = 0, j = 0; i < numTiros; i++) {
         pX = (*tiros)[j].nextX();
         pY = (*tiros)[j].nextY();
+        pH = (*tiros)[j].nextH();
 
         int checagem = checarTiros(pX, pY, RAIO_TIRO, (*tiros)[j].getDono());
 
         if(checagem == CHAO) {
             (*tiros)[j].setX(pX);
             (*tiros)[j].setY(pY);
+            // (*tiros)[j].setH(pH);
             j++;
         } else {
             this->tiros->erase(this->tiros->begin() + j);

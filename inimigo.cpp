@@ -217,7 +217,7 @@ void Inimigo::atira(Jogo *jogo) {
     GLfloat vel = this->velTiro;
     GLfloat dir = this->front + this->gun;
 
-    jogo->adicionarTiro(Tiro(cx, cy, h, vel, dir, INIMIGO));
+    jogo->adicionarTiro(Tiro(cx, cy, h, vel, dir, 0.0, INIMIGO));
 }
 
 void Inimigo::pula(Jogo *jogo) {

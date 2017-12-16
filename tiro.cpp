@@ -1,6 +1,6 @@
 #include "tiro.h"
 
-Tiro::Tiro(GLfloat cx, GLfloat cy, GLfloat h, GLfloat vel, GLfloat dir, int dono) {
+Tiro::Tiro(GLfloat cx, GLfloat cy, GLfloat h, GLfloat vel, GLfloat dir, GLfloat dirV, int dono) {
     this->inicX = cx;
     this->cx = cx;
     this->inicY = cy;
@@ -9,6 +9,7 @@ Tiro::Tiro(GLfloat cx, GLfloat cy, GLfloat h, GLfloat vel, GLfloat dir, int dono
     this->h = h;
     this->vel = vel;
     this->dir = dir;
+    this->dirV = dirV;
     this->dono = dono;
     this->inic = iniciar();
 }
@@ -32,6 +33,10 @@ GLfloat Tiro::nextX() {
 
 GLfloat Tiro::nextY() {
     return this->inicY + vel*this->tempo()*cos(this->dir);
+}
+
+GLfloat Tiro::nextH() {
+    return this->inicH + vel*this->tempo()*cos(this->dirV);
 }
 
 void Tiro::setX(GLfloat x) {
