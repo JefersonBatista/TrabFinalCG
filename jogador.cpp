@@ -7,6 +7,7 @@ Jogador::Jogador(GLfloat centroX, GLfloat centroY, GLfloat raio, GLfloat vel, GL
     this->h = 0.0;
     this->front = 0.0;
     this->gun = 0.0;
+    this->gunV = 0.0;
     this->vel = vel;
     this->velTiro = velTiro;
     this->legAngle = 0.0;
@@ -45,6 +46,14 @@ GLfloat Jogador::getAltura(){
 
 GLfloat Jogador::getAlturaPulo() {
     return getAltura()/3.0;
+}
+
+GLfloat Jogador::getGunH(){
+    return this->gun;
+}
+
+GLfloat Jogador::getGunV(){
+    return this->gunV;
 }
 
 void Jogador::desenha2d() {

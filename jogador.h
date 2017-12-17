@@ -30,6 +30,8 @@ class Jogador {
         GLfloat getAltura();
         GLfloat getAlturaPulo();
         GLfloat getFront();
+        GLfloat getGunH();
+        GLfloat getGunV();
         void desenha2d();
         void desenha3d();
         void move(Jogo *jogo, GLfloat delta);

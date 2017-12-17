@@ -12,8 +12,8 @@
 using namespace tinyxml2;
 using namespace std;
 
-#define WindowWidth 1000
-#define WindowHeight 1000
+#define WindowWidth 500
+#define WindowHeight 700
 #define MouseMotionToGunRotation 8.0
 #define MouseExitDetection 0.02
 
@@ -29,6 +29,9 @@ int camAngle = 90;
 int lastX = 0;
 int lastY = 0;
 int buttonDown=0;
+
+Arena *arena;
+int arenaData[6];
 
 GLfloat prevX, prevY;
 
@@ -53,34 +56,57 @@ GLfloat freqTiroInimigo;
 GLfloat alturaObst;
 
 void renderScene(void) {
-    glClear(GL_COLOR_BUFFER_BIT);
 
     jogo->desenha();
 
-    glutSwapBuffers();
 }
 
 void display(void) {
+    glClear(GL_COLOR_BUFFER_BIT);
+
+
+    // parte de cima - Visao do Jogador
     glMatrixMode(GL_PROJECTION);
+    glViewport(0,WindowWidth, WindowWidth, 200);
     glLoadIdentity();
     gluPerspective(camAngle, 1.0, (ViewingYMax - ViewingYMin)/100, (ViewingYMax - ViewingYMin)*5.0);
-    // glTranslatef(jogador->getX(), jogador->getY(), jogador->getAltura()*2);
+
+    GLfloat recuo = jogador->getR();
+    GLfloat ang = jogador->getFront();
+    gluLookAt(jogador->getX()-recuo*sin(ang), jogador->getY()+recuo*cos(ang), jogador->getH()+jogador->getAltura()*4/5,
+        jogador->getX()-2*recuo*sin(ang), jogador->getY()+2*recuo*cos(ang), jogador->getH()+jogador->getAltura()*4/5,
+        0, 0, 1);
+    glMatrixMode(GL_MODELVIEW);
+
+
+    renderScene(); // desenha mundo
+
+
+    // parte de baixo - Visao das Camera
+    glMatrixMode(GL_PROJECTION);
+    glViewport(0,0, WindowWidth, WindowWidth);
+    glLoadIdentity();
+    gluPerspective(camAngle, 1.0, (ViewingYMax - ViewingYMin)/100, (ViewingYMax - ViewingYMin)*5.0);
+
     if (toggleCam == 1){
-        // colocar camera sobre a arma
-    //     GLfloat recuo = jogador->getR();
-    //     GLfloat ang = jogador->getFront();
-    //     gluLookAt(jogador->getX()+(recuo)*sin(ang), jogador->getY()-(recuo)*cos(ang), jogador->getAltura()/2,
-    //         jogador->getX(), jogador->getY(), jogador->getAltura()/2,
-    //         0, 0, 1);
+        // camera sobre a arma
+        GLfloat h = jogador->getR()*2.8 + jogador->getH();
+        GLfloat recuo = jogador->getR();
+        GLfloat front = jogador->getFront();
+        GLfloat front90 = jogador->getFront()+90*M_PI/180;
+        GLfloat angH = jogador->getGunH() ;
+        GLfloat angV = jogador->getGunV();
+
+        gluLookAt(jogador->getX()+recuo*sin(front90), jogador->getY()-recuo*cos(front90),h,
+            jogador->getX()-2*recuo*sin(angH + front), jogador->getY()+2*recuo*cos(angH + front), h+2*recuo*cos(angV),
+            0, 0, 1);
     }
     if (toggleCam == 2){
+        // camera 3a pessoa
         GLfloat recuo = 5*jogador->getR();
         GLfloat angH = jogador->getFront();
         GLfloat angV = camVAngle*M_PI/180;
         angH -= camHAngle*M_PI/180;
-
-        // glRotatef(camHAngle,0,1,0);
-        // printf("%f\n", camHAngle);
 
         GLfloat Xcam = jogador->getX()+(recuo)*sin(angH)*cos(angV);
         GLfloat Ycam = jogador->getY()-(recuo)*cos(angH)*cos(angV);
@@ -91,7 +117,26 @@ void display(void) {
     }
 
     glMatrixMode(GL_MODELVIEW);
-    renderScene();
+
+    renderScene(); // desenha mundo
+
+    // desenha minimapa
+    glMatrixMode(GL_PROJECTION);
+    glViewport(WindowWidth*3/4,0, WindowWidth/4, WindowWidth/4);
+    glLoadIdentity();
+    gluPerspective(camAngle, 1.0, (ViewingYMax - ViewingYMin)/100, (ViewingYMax - ViewingYMin)*5.0);
+
+    recuo = jogador->getR();
+    ang = jogador->getFront();
+
+    gluLookAt(arena->getXBlue(),arena->getYBlue(), 350,
+        arena->getXBlue(), arena->getYBlue(), 0,
+        0, 1, 0);
+    glMatrixMode(GL_MODELVIEW);
+
+    renderScene(); // desenha mundo
+
+    glutSwapBuffers();
 }
 
 void mouse(int button, int state, int x, int y) {
@@ -169,7 +214,7 @@ void keyPress(unsigned char key, int x, int y) {
     if(key == '2') {
         toggleCam = 2;
     }
-    if(key == 'p') {
+    if(key == 'p' || key == ' ') {
         jogador->pula(jogo);
     }
     keyFlags[key] = 1;
@@ -306,9 +351,6 @@ int main(int argc, char** argv) {
         printf("Arquivo da arena não pôde ser lido ou não foi encontrado!\n");
         return 3;
     }
-
-    Arena *arena;
-    int arenaData[6];
 
     inimigos = new vector<Inimigo>;
     vector<Obstaculo> *obstaculos = new vector<Obstaculo>;
