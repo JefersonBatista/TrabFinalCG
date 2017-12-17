@@ -34,8 +34,20 @@ GLfloat Inimigo::getY() {
     return this->cy;
 }
 
+GLfloat Inimigo::getH() {
+    return this->h;
+}
+
 GLfloat Inimigo::getR() {
     return this->r;
+}
+
+GLfloat Inimigo::getAltura() {
+    return r*legHM + r*bodyHM + 2*r*headM;
+}
+
+GLfloat Inimigo::getAlturaPulo() {
+    return getAltura()/3.0;
 }
 
 int Inimigo::getMovStatus() {
@@ -145,7 +157,7 @@ void Inimigo::move(Jogo *jogo, GLfloat delta, int num) {
                 case NORMAL:
                     return;
                 case PULANDO:
-                    this->h = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
+                    this->h = nivel(this->alturaInicTransicao, this->getAlturaPulo(), tempo_em_s(this->inicTransicao), this->status);
                     if (this->h >= jogo->getAlturaObst()) {
                         this->cx = pX;
                         this->cy = pY;
@@ -154,7 +166,7 @@ void Inimigo::move(Jogo *jogo, GLfloat delta, int num) {
                         return;
                     }
                 case CAINDO:
-                    this->h = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
+                    this->h = nivel(this->alturaInicTransicao, this->getAlturaPulo(),tempo_em_s(this->inicTransicao), this->status);
                     if (this->h >= jogo->getAlturaObst()) {
                         this->cx = pX;
                         this->cy = pY;
@@ -203,17 +215,12 @@ void Inimigo::moveArma(GLfloat angle) {
 }
 
 void Inimigo::atira(Jogo *jogo) {
-    // Não atirar pulando ou em cima de plataforma
-    if(this->status != NORMAL) {
-        return;
-    }
-
-    GLfloat toArm = this->r/1.5 + this->r/8.0;
+    GLfloat toArm = r*bodyRM;
     GLfloat angle = this->front;
 
     GLfloat cx = this->cx + toArm*cos(angle);
     GLfloat cy = this->cy + toArm*sin(angle);
-    GLfloat h = r*legHM + r*bodyHM;
+    GLfloat h = this->h + r*legHM + r*bodyHM;
     GLfloat vel = this->velTiro;
     GLfloat dir = this->front + this->gun;
 
@@ -236,24 +243,28 @@ void Inimigo::pula(Jogo *jogo) {
 
 void Inimigo::anima(Jogo *jogo) {
     int checagem;
-    GLfloat mult;
     GLfloat tempo;
+    GLfloat tempoPulo;
 
     switch (this->status) {
         case PULANDO:
+            /* Dividido por 2 (tempo de subida)
+             * Dividido por 1000 (tempoPulo em s, não ms)
+             */
+            tempoPulo = DURACAO_PULO/2000.0;
             tempo = tempo_em_s(this->inicTransicao);
 
             // O pulo acabou?
-            if(tempo > 1.0) {
-                this->alturaInicTransicao += 1.0 - (tempo - 1.0);
+            if(tempo > tempoPulo) {
+                this->alturaInicTransicao += (1.0 - (tempo - tempoPulo)/tempoPulo)*this->getAlturaPulo();
                 this->inicTransicao = iniciar();
                 this->status = CAINDO;
             }
-            this->h = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
+            this->h = nivel(this->alturaInicTransicao, this->getAlturaPulo(),tempo_em_s(this->inicTransicao), this->status);
             break;
         case CAINDO:
             checagem = jogo->checarLimites(this->cx, this->cy, this->r, INIMIGO);
-            this->h = nivel(this->alturaInicTransicao, tempo_em_s(this->inicTransicao), this->status);
+            this->h = nivel(this->alturaInicTransicao, this->getAlturaPulo(),tempo_em_s(this->inicTransicao), this->status);
 
             switch (checagem) {
                 case CHAO:
@@ -271,12 +282,6 @@ void Inimigo::anima(Jogo *jogo) {
                     }
             }
     }
-
-    // Só é preciso animar se o inimigo estiver pulando ou caindo
-    /* if(this->status != NORMAL && this->status != PLATAFORMA) {
-        mult = zoom(this->h);
-        this->r = mult*this->r;
-    } */
 
     GLfloat tempoPorTiro = 1.0/this->freqTiro;
     if(tempo_em_s(this->lastShoot) > tempoPorTiro) {

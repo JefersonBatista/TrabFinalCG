@@ -36,7 +36,7 @@ GLfloat Tiro::nextY() {
 }
 
 GLfloat Tiro::nextH() {
-    return this->inicH + vel*this->tempo()*cos(this->dirV);
+    return this->inicH + vel*this->tempo()*sin(this->dirV);
 }
 
 void Tiro::setX(GLfloat x) {

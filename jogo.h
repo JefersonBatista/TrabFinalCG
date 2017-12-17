@@ -40,7 +40,7 @@ class Jogo {
         void desenha();
         int checarLimites(GLfloat pX, GLfloat pY, GLfloat r, int personagem);
         int checarInimigos(GLfloat pX, GLfloat pY, GLfloat r, int num);
-        int checarTiros(GLfloat pX, GLfloat pY, GLfloat r, int dono);
+        int checarTiros(GLfloat pX, GLfloat pY, GLfloat pH, GLfloat r, int dono);
         void adicionarTiro(Tiro tiro);
         void anima();
         void moveInimigos(GLfloat transcorrido);

@@ -27,7 +27,10 @@ class Inimigo {
         Inimigo(GLfloat centroX, GLfloat centroY, GLfloat raio, GLfloat vel, GLfloat velTiro, GLfloat freqTiro);
         GLfloat getX();
         GLfloat getY();
+        GLfloat getH();
         GLfloat getR();
+        GLfloat getAltura();
+        GLfloat getAlturaPulo();
         void desenha2d();
         void desenha3d();
         int getMovStatus();

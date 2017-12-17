@@ -235,6 +235,7 @@ void init(void) {
                0, 1, 0);
     glMatrixMode(GL_MODELVIEW);
     // glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
+    glEnable(GL_DEPTH_TEST);
 }
 
 int main(int argc, char** argv) {

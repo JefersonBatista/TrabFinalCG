@@ -25,8 +25,10 @@ class Jogador {
         Jogador(GLfloat centroX, GLfloat centroY, GLfloat raio, GLfloat vel, GLfloat velTiro);
         GLfloat getX();
         GLfloat getY();
+        GLfloat getH();
         GLfloat getR();
         GLfloat getAltura();
+        GLfloat getAlturaPulo();
         GLfloat getFront();
         void desenha2d();
         void desenha3d();

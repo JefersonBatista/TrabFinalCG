@@ -82,21 +82,15 @@ GLfloat distancia(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2) {
     return sqrt(distQuadX + distQuadY);
 }
 
-GLfloat nivel(GLfloat alturaInic, GLfloat tempo, int status) {
-    GLfloat result;
-    switch (status) {
+GLfloat nivel(GLfloat alturaInic, GLfloat alturaPulo, GLfloat tempo, int status) {
+    /* Dividido por 2 (tempo de subida)
+     * Dividido por 1000 (tempoPulo em s, não ms)
+     */
+    GLfloat tempoPulo = DURACAO_PULO/2000.0;
+    switch(status) {
         case PULANDO:
-            result = alturaInic + tempo;
-            break;
+            return alturaInic + alturaPulo*(tempo/tempoPulo);
         case CAINDO:
-            result = alturaInic - tempo;
+            return alturaInic - alturaPulo*(tempo/tempoPulo);
     }
-    // printf("nivel = %f\n", result);
-    return 10.0*result;
-}
-
-GLfloat zoom(GLfloat altura) {
-    GLfloat result = 1.0 + 0.5*altura;
-    // printf("zoom = %f\n", result);
-    return result;
 }

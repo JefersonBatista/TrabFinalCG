@@ -5,7 +5,7 @@ Jogo::Jogo(Arena *arena, Jogador *jogador, vector<Inimigo> *inimigos, vector<Obs
     this->jogador = jogador;
     this->inimigos = inimigos;
     this->obstaculos = obstaculos;
-    this->alturaObst = alturaObst;
+    this->alturaObst = this->jogador->getAlturaPulo()*alturaObst;
     this->tiros = new vector<Tiro>;
     this->pontos = 0;
     this->status = JOGANDO;
@@ -14,11 +14,8 @@ Jogo::Jogo(Arena *arena, Jogador *jogador, vector<Inimigo> *inimigos, vector<Obs
 void Jogo::desenha() {
     this->arena->desenha();
 
-    // GLfloat altura = jogador->getAltura()*alturaObst/100.0;
-    GLfloat altura = 20.0;
-    // printf("alturaObst = %f\n", altura);
     for(int i = 0; i < obstaculos->size(); i++) {
-        (*(this->obstaculos))[i].desenha3d(altura);
+        (*(this->obstaculos))[i].desenha3d(this->alturaObst);
     }
 
     for(int i = 0; i < tiros->size(); i++) {
@@ -76,20 +73,24 @@ int Jogo::checarInimigos(GLfloat pX, GLfloat pY, GLfloat r, int num) {
     return checarLimites(pX, pY, r, INIMIGO);
 }
 
-int Jogo::checarTiros(GLfloat pX, GLfloat pY, GLfloat r, int dono) {
+int Jogo::checarTiros(GLfloat pX, GLfloat pY, GLfloat pH, GLfloat r, int dono) {
     switch (dono) {
         case JOGADOR:
             for(int i = 0; i < inimigos->size(); i++) {
                 if(distancia((*(this->inimigos))[i].getX(), (*(this->inimigos))[i].getY(), pX, pY) < (*(this->inimigos))[i].getR() + r) {
-                    this->marca(i);
-                    return PROIBIDO;
+                    if(pH > (*(this->inimigos))[i].getH() && pH < (*(this->inimigos))[i].getH() + (*(this->inimigos))[i].getAltura()) {
+                        this->marca(i);
+                        return PROIBIDO;
+                    }
                 }
             }
             break;
         case INIMIGO:
             if(distancia(this->jogador->getX(), this->jogador->getY(), pX, pY) < this->jogador->getR() + r) {
-                this->fim();
-                return PROIBIDO;
+                if(pH > this->jogador->getH() && pH < this->jogador->getH() + this->jogador->getAltura()) {
+                    this->fim();
+                    return PROIBIDO;
+                }
             }
     }
 
@@ -103,8 +104,11 @@ int Jogo::checarTiros(GLfloat pX, GLfloat pY, GLfloat r, int dono) {
 
     // Checando obstáculos
     for(int i = 0; i < obstaculos->size(); i++) {
-        if(distancia((*(this->obstaculos))[i].getX(), (*(this->obstaculos))[i].getY(), pX, pY) < (*(this->obstaculos))[i].getR() + r)
-            return OBSTACULO;
+        if(distancia((*(this->obstaculos))[i].getX(), (*(this->obstaculos))[i].getY(), pX, pY) < (*(this->obstaculos))[i].getR() + r) {
+            if(pH < this->alturaObst) {
+                return OBSTACULO;
+            }
+        }
     }
 
     return CHAO;
@@ -129,12 +133,12 @@ void Jogo::anima() {
         pY = (*tiros)[j].nextY();
         pH = (*tiros)[j].nextH();
 
-        int checagem = checarTiros(pX, pY, RAIO_TIRO, (*tiros)[j].getDono());
+        int checagem = checarTiros(pX, pY, pH, RAIO_TIRO, (*tiros)[j].getDono());
 
         if(checagem == CHAO) {
             (*tiros)[j].setX(pX);
             (*tiros)[j].setY(pY);
-            // (*tiros)[j].setH(pH);
+            (*tiros)[j].setH(pH);
             j++;
         } else {
             this->tiros->erase(this->tiros->begin() + j);
