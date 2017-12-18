@@ -63,17 +63,6 @@ void Jogador::desenha2d() {
         glTranslatef(this->cx, this->cy, 0.0);
         glRotatef(frontDeg, 0.0, 0.0, 1.0);
 
-        // Desenhando os pés
-        /* switch(this->foot) {
-            case RIGHTFOOT:
-                desenhaRetangulo(this->r/2.25, this->r/1.2, 0.15, 0.0, 0.0);
-                desenhaRetangulo(-this->r/2.25, -this->r/1.2, 0.15, 0.0, 0.0);
-                break;
-            case LEFTFOOT:
-                desenhaRetangulo(-this->r/2.25, this->r/1.2, 0.15, 0.0, 0.0);
-                desenhaRetangulo(this->r/2.25, -this->r/1.2, 0.15, 0.0, 0.0);
-        } */
-
         // Desenhando o braço
         glPushMatrix();
             GLfloat gunDeg = this->gun/(2*M_PI)*360.0;
@@ -103,10 +92,21 @@ void Jogador::desenha3d() {
 
         // Desenhando as pernas
         glPushMatrix();
-            glTranslatef(r*legRM, 0.0, 0.0);
-            desenhaCilindro(r*legRM, r*legHM, 0.0, 0.15, 0.0);
-            glTranslatef(-2.0*(r*legRM), 0.0, 0.0);
-            desenhaCilindro(r*legRM, r*legHM, 0.0, 0.15, 0.0);
+            glTranslatef(r*legRM, 0.0, r*legHM);
+            glRotatef(this->legAngle, 1,0,0);
+            desenhaCilindro(r*legRM, -r*legHM/2, 0.0, 0.15, 0.0);
+            glTranslatef(0.0, 0.0, -r*legHM/2);
+            glRotatef(-fabs(this->legAngle), 1,0,0);
+            desenhaCilindro(r*legRM, -r*legHM/2, 0.0, 0.15, 0.0);
+        glPopMatrix();
+
+        glPushMatrix();
+            glTranslatef(-(r*legRM), 0.0, r*legHM);
+            glRotatef(-this->legAngle, 1,0,0);
+            desenhaCilindro(r*legRM, -r*legHM/2, 0.0, 0.15, 0.0);
+            glTranslatef(0.0, 0.0, -r*legHM/2);
+            glRotatef(-fabs(this->legAngle), 1,0,0);
+            desenhaCilindro(r*legRM, -r*legHM/2, 0.0, 0.15, 0.0);
         glPopMatrix();
 
         // Desenhando o tronco
@@ -116,18 +116,20 @@ void Jogador::desenha3d() {
         // Desenhando o braço
         glTranslatef(0.0, 0.0, r*bodyHM);
         glPushMatrix();
+            glTranslatef(-r*bodyRM, 0.0, 0.0);
+            glRotatef(15, 0.0, 1.0, 0.0);
+            glRotatef(this->legAngle, 1.0, 0.0, 0.0);
+            desenhaCilindro(r*armRM, -r*armHM, 0.0, 0.5, 0.0);
+        glPopMatrix();
+        glPushMatrix();
             GLfloat gunDeg = this->gun/(2*M_PI)*360.0;
             GLfloat gunDegV = this->gunV/(2*M_PI)*360.0;
-
             glTranslatef(r*bodyRM, 0.0, 0.0);
             glRotatef(gunDeg, 0.0, 0.0, 1.0);
             glRotatef(gunDegV, 1.0, 0.0, 0.0);
             glRotatef(-90.0, 1.0, 0.0, 0.0);
             desenhaCilindro(r*armRM, r*armHM, 0.0, 0.5, 0.0);
         glPopMatrix();
-
-        // Desenhando ombros
-        // desenhaElipse(this->r, this->r/3.0, 0.0, 0.6, 0.0);
 
         // Desenhando a cabeça
         glTranslatef(0.0, 0.0, r*headM);
@@ -196,14 +198,8 @@ void Jogador::rotate(GLfloat delta) {
     if(this->front > 2*M_PI) this->front -= 2*M_PI;
 }
 
-// TODO: Como controlar os ângulos das pernas?
 void Jogador::changeLegAngle() {
-    unsigned long long tempo = tempo_em_ms(this->lastFootChange);
-    this->legAngle += tempo/100.0;
-    if(this->legAngle > M_PI/4.0) {
-        this->legAngle -= M_PI/2.0;
-    }
-    this->lastFootChange = iniciar();
+    this->legAngle = 15*(sin(((cy+cy)/2)*M_PI/45));
 }
 
 void Jogador::moveArma(GLfloat angle) {

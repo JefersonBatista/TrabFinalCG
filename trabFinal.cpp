@@ -110,7 +110,7 @@ void display(void) {
 
         GLfloat Xcam = jogador->getX()+(recuo)*sin(angH)*cos(angV);
         GLfloat Ycam = jogador->getY()-(recuo)*cos(angH)*cos(angV);
-        GLfloat Hcam = jogador->getAltura()*1.5+jogador->getAltura()*1.5*sin(angV);
+        GLfloat Hcam = jogador->getAltura()+jogador->getAltura()*sin(angV);
         gluLookAt(Xcam, Ycam, Hcam,
             jogador->getX(), jogador->getY(), jogador->getAltura()/2, // mira no meio do tronco do jogador
             0, 0, 1);
@@ -129,7 +129,7 @@ void display(void) {
     recuo = jogador->getR();
     ang = jogador->getFront();
 
-    gluLookAt(arena->getXBlue(),arena->getYBlue(), 350,
+    gluLookAt(arena->getXBlue(),arena->getYBlue(), WindowWidth*.7,
         arena->getXBlue(), arena->getYBlue(), 0,
         0, 1, 0);
     glMatrixMode(GL_MODELVIEW);
