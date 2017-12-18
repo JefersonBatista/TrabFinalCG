@@ -48,6 +48,10 @@ GLfloat Jogador::getAlturaPulo() {
     return getAltura()/3.0;
 }
 
+GLfloat Jogador::getFront() {
+    return this->front;
+}
+
 GLfloat Jogador::getGunH(){
     return this->gun;
 }
@@ -57,30 +61,10 @@ GLfloat Jogador::getGunV(){
 }
 
 void Jogador::desenha2d() {
-    GLfloat frontDeg = this->front/(2*M_PI)*360.0;
-
     glPushMatrix();
         glTranslatef(this->cx, this->cy, 0.0);
-        glRotatef(frontDeg, 0.0, 0.0, 1.0);
-
-        // Desenhando o braço
-        glPushMatrix();
-            GLfloat gunDeg = this->gun/(2*M_PI)*360.0;
-            glTranslatef(this->r/1.5, 0.0, 0.0);
-            glRotatef(gunDeg, 0.0, 0.0, 1.0);
-            desenhaRetangulo(this->r/4.0, this->r, 0.5, 0.0, 0.0);
-        glPopMatrix();
-
-        // Desenhando ombros
-        desenhaElipse(this->r, this->r/3.0, 0.6, 0.0, 0.0);
-
-        // Desenhando a cabeça
-        desenhaCirc(this->r/1.5, 1.0, 0.0, 0.0);
+        desenhaCirc(this->r, 0.0, 1.0, 0.0);
     glPopMatrix();
-}
-
-GLfloat Jogador::getFront() {
-    return this->front;
 }
 
 void Jogador::desenha3d() {

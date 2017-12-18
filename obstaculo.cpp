@@ -18,6 +18,13 @@ GLfloat Obstaculo::getR() {
     return this->r;
 }
 
+void Obstaculo::desenha2d() {
+    glPushMatrix();
+        glTranslatef(this->cx, this->cy, 0.0);
+        desenhaCirc(this->r, 0.0, 0.0, 0.0);
+    glPopMatrix();
+}
+
 void Obstaculo::desenha3d(GLfloat altura) {
     glPushMatrix();
         glTranslatef(this->cx, this->cy, 0.0);

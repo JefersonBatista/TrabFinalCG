@@ -13,6 +13,23 @@ void desenhaCirc(GLfloat r, GLfloat R, GLfloat G, GLfloat B) {
     glEnd();
 }
 
+void desenhaCircLin(GLfloat r, GLfloat R, GLfloat G, GLfloat B) {
+    int points = 200;
+    GLfloat angleIncr = 2*M_PI/points;
+    GLfloat angle = angleIncr;
+
+    glColor3f(R,G,B);
+    glBegin(GL_LINES);
+        glVertex3f(r, 0.0, 0.0);
+        for(int i = 1; i < points; i++) {
+            glVertex3f(r*cos(angle), r*sin(angle), 0.0);
+            glVertex3f(r*cos(angle), r*sin(angle), 0.0);
+            angle += angleIncr;
+        }
+        glVertex3f(r, 0.0, 0.0);
+    glEnd();
+}
+
 void desenhaEsfera(GLfloat r, GLfloat R, GLfloat G, GLfloat B) {
     glutSolidSphere(r, 100, 16);
 }

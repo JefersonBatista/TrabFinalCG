@@ -12,7 +12,7 @@ Jogo::Jogo(Arena *arena, Jogador *jogador, vector<Inimigo> *inimigos, vector<Obs
 }
 
 void Jogo::desenha() {
-    this->arena->desenha();
+    this->arena->desenha3d();
 
     for(int i = 0; i < obstaculos->size(); i++) {
         (*(this->obstaculos))[i].desenha3d(this->alturaObst);
@@ -27,6 +27,21 @@ void Jogo::desenha() {
 
     for(int i = 0; i < inimigos->size(); i++) {
         (*(this->inimigos))[i].desenha3d();
+    }
+}
+
+void Jogo::minimapa() {
+    this->arena->desenha2d();
+
+    for(int i = 0; i < obstaculos->size(); i++) {
+        (*(this->obstaculos))[i].desenha2d();
+    }
+
+    if(this->status != PERDEU)
+        this->jogador->desenha2d();
+
+    for(int i = 0; i < inimigos->size(); i++) {
+        (*(this->inimigos))[i].desenha2d();
     }
 }
 

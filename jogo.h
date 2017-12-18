@@ -38,6 +38,7 @@ class Jogo {
     public:
         Jogo(Arena *arena, Jogador *jogador, vector<Inimigo> *inimigos, vector<Obstaculo> *obstaculos, GLfloat alturaObst);
         void desenha();
+        void minimapa();
         int checarLimites(GLfloat pX, GLfloat pY, GLfloat r, int personagem);
         int checarInimigos(GLfloat pX, GLfloat pY, GLfloat r, int num);
         int checarTiros(GLfloat pX, GLfloat pY, GLfloat pH, GLfloat r, int dono);

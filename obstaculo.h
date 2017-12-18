@@ -15,6 +15,7 @@ class Obstaculo {
         GLfloat getX();
         GLfloat getY();
         GLfloat getR();
+        void desenha2d();
         void desenha3d(GLfloat altura);
 };
 

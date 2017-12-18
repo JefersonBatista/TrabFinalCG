@@ -18,7 +18,8 @@ class Arena {
         GLfloat getXWhite();
         GLfloat getYWhite();
         GLfloat getRWhite();
-        void desenha();
+        void desenha2d();
+        void desenha3d();
 };
 
 #endif

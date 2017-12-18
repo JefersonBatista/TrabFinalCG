@@ -34,7 +34,19 @@ GLfloat Arena::getRWhite() {
     return this->rWhite;
 }
 
-void Arena::desenha() {
+void Arena::desenha2d() {
+    glPushMatrix();
+        glTranslatef(this->cxBlue, this->cyBlue, 0.0);
+        desenhaCircLin(this->rBlue, 0.5, 0.5, 0.0);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(this->cxWhite, this->cyWhite, 0.0);
+        desenhaCircLin(this->rWhite, 0.5, 0.5, 0.0);
+    glPopMatrix();
+}
+
+void Arena::desenha3d() {
     glPushMatrix();
         glTranslatef(this->cxBlue, this->cyBlue, 0.0);
         // desenhaCilindro(this->rBlue, 120, 0.0, 0.0, 1.0);

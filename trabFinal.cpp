@@ -61,6 +61,10 @@ void renderScene(void) {
 
 }
 
+void renderMinimap(void) {
+    jogo->minimapa();
+}
+
 void display(void) {
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -69,7 +73,7 @@ void display(void) {
     glMatrixMode(GL_PROJECTION);
     glViewport(0,WindowWidth, WindowWidth, 200);
     glLoadIdentity();
-    gluPerspective(camAngle, 1.0, (ViewingYMax - ViewingYMin)/100, (ViewingYMax - ViewingYMin)*5.0);
+    gluPerspective(camAngle, WindowWidth/200, (ViewingYMax - ViewingYMin)/100, (ViewingYMax - ViewingYMin)*5.0);
 
     GLfloat recuo = jogador->getR();
     GLfloat ang = jogador->getFront();
@@ -125,17 +129,19 @@ void display(void) {
     glMatrixMode(GL_PROJECTION);
     glViewport(WindowWidth*3/4,0, WindowWidth/4, WindowWidth/4);
     glLoadIdentity();
-    gluPerspective(camAngle, 1.0, (ViewingYMax - ViewingYMin)/100, (ViewingYMax - ViewingYMin)*5.0);
 
-    recuo = jogador->getR();
-    ang = jogador->getFront();
+    glOrtho(
+        ViewingXMin/2,
+        ViewingXMax/2,
+        ViewingYMin/2,
+        ViewingYMax/2,
+        100,
+        -100
+    );
 
-    gluLookAt(arena->getXBlue(),arena->getYBlue(), WindowWidth*.7,
-        arena->getXBlue(), arena->getYBlue(), 0,
-        0, 1, 0);
     glMatrixMode(GL_MODELVIEW);
 
-    renderScene(); // desenha mundo
+    renderMinimap(); // desenha minimapa do mundo
 
     glutSwapBuffers();
 }
@@ -266,22 +272,8 @@ void init(void) {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     /* inicializar sistema de viz. */
-
-    /* glOrtho(ViewingXMin,
-            ViewingXMax,
-            ViewingYMin,
-            ViewingYMax,
-            100,
-            -100); */
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(camAngle, 1.0, (ViewingYMax - ViewingYMin)/8.0, (ViewingYMax - ViewingYMin));
-    gluLookAt(camPosX, camPosY, (ViewingYMax - ViewingYMin)/4.0,
-              jogador->getX(), jogador->getY(), 0,
-               0, 1, 0);
     glMatrixMode(GL_MODELVIEW);
-    // glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
-    glEnable(GL_DEPTH_TEST);
+    // glEnable(GL_DEPTH_TEST);
 }
 
 int main(int argc, char** argv) {
@@ -409,6 +401,7 @@ int main(int argc, char** argv) {
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    // glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(WindowWidth, WindowHeight);
     glutInitWindowPosition(400, 100);
     glutCreateWindow("Arena");
