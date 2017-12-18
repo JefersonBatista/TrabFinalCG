@@ -19,7 +19,7 @@ class Arena {
         GLfloat getYWhite();
         GLfloat getRWhite();
         void desenha2d();
-        void desenha3d();
+        void desenha3d(GLfloat altura);
 };
 
 #endif

@@ -45,6 +45,7 @@ class Jogo {
         void adicionarTiro(Tiro tiro);
         void anima();
         void moveInimigos(GLfloat transcorrido);
+        int getStatus();
         void marca(int morto);
         void fim();
         GLfloat getAlturaObst();

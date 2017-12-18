@@ -1,4 +1,5 @@
 #include "jogo.h"
+#include "texto.h"
 
 Jogo::Jogo(Arena *arena, Jogador *jogador, vector<Inimigo> *inimigos, vector<Obstaculo> *obstaculos, GLfloat alturaObst) {
     this->arena = arena;
@@ -12,7 +13,8 @@ Jogo::Jogo(Arena *arena, Jogador *jogador, vector<Inimigo> *inimigos, vector<Obs
 }
 
 void Jogo::desenha() {
-    this->arena->desenha3d();
+    GLfloat alturaArena = 4.0*this->jogador->getAltura();
+    this->arena->desenha3d(alturaArena);
 
     for(int i = 0; i < obstaculos->size(); i++) {
         (*(this->obstaculos))[i].desenha3d(this->alturaObst);
@@ -28,6 +30,22 @@ void Jogo::desenha() {
     for(int i = 0; i < inimigos->size(); i++) {
         (*(this->inimigos))[i].desenha3d();
     }
+
+    char text[20], vitoria[20], derrota[20];
+    sprintf(text, "Pontos: %d", this->pontos);
+
+    glPushMatrix();
+        PrintText(0.1, 0.1, text, 0.0, 1.0, 0.0);
+        switch (this->status) {
+            case VENCEU:
+                sprintf(vitoria, "Voce venceu!");
+                // PrintText(0.1, 0.1, vitoria, 0.0, 1.0, 0.0);
+                break;
+            case PERDEU:
+                sprintf(derrota, "Voce perdeu!");
+                // PrintText(0.1, 0.1, derrota, 0.0, 1.0, 0.0);
+        }
+    glPopMatrix();
 }
 
 void Jogo::minimapa() {
@@ -55,7 +73,7 @@ int Jogo::checarLimites(GLfloat pX, GLfloat pY, GLfloat r, int personagem) {
         return PROIBIDO;
 
     // Checando colisão com jogador
-    if(personagem != JOGADOR) {
+    if(personagem != JOGADOR && this->status != PERDEU) {
         if(distancia(this->jogador->getX(), this->jogador->getY(), pX, pY) < this->jogador->getR() + r)
             return PROIBIDO;
     }
@@ -101,10 +119,12 @@ int Jogo::checarTiros(GLfloat pX, GLfloat pY, GLfloat pH, GLfloat r, int dono) {
             }
             break;
         case INIMIGO:
-            if(distancia(this->jogador->getX(), this->jogador->getY(), pX, pY) < this->jogador->getR() + r) {
-                if(pH > this->jogador->getH() && pH < this->jogador->getH() + this->jogador->getAltura()) {
-                    this->fim();
-                    return PROIBIDO;
+            if(this->status != PERDEU) {
+                if(distancia(this->jogador->getX(), this->jogador->getY(), pX, pY) < this->jogador->getR() + r) {
+                    if(pH > this->jogador->getH() && pH < this->jogador->getH() + this->jogador->getAltura()) {
+                        this->fim();
+                        return PROIBIDO;
+                    }
                 }
             }
     }
@@ -313,6 +333,10 @@ void Jogo::moveInimigos(GLfloat transcorrido) {
         }
         // Fim da checagem posterior de obstáculos
     }
+}
+
+int Jogo::getStatus() {
+    return this->status;
 }
 
 void Jogo::marca(int morto) {

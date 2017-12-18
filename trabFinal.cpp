@@ -66,7 +66,7 @@ void renderMinimap(void) {
 }
 
 void display(void) {
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
     // parte de cima - Visao do Jogador
@@ -273,7 +273,7 @@ void init(void) {
 
     /* inicializar sistema de viz. */
     glMatrixMode(GL_MODELVIEW);
-    // glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
 }
 
 int main(int argc, char** argv) {
@@ -400,8 +400,8 @@ int main(int argc, char** argv) {
     prevX = -1.0;
 
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    // glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    // glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(WindowWidth, WindowHeight);
     glutInitWindowPosition(400, 100);
     glutCreateWindow("Arena");

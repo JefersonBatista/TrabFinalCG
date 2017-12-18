@@ -209,6 +209,10 @@ void Jogador::moveArmaV(GLfloat angle) {
 }
 
 void Jogador::atira(Jogo *jogo) {
+    if(jogo->getStatus() == PERDEU) {
+        return;
+    }
+
     GLfloat toArm = r*bodyRM;
     GLfloat angle = this->front;
 
