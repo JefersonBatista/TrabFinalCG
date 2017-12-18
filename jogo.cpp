@@ -39,27 +39,25 @@ void Jogo::desenha() {
         switch (this->status) {
             case VENCEU:
                 sprintf(vitoria, "Voce venceu!");
-                // PrintText(0.1, 0.1, vitoria, 0.0, 1.0, 0.0);
+                PrintText(0.5, 0.5, vitoria, 0.0, 1.0, 0.0);
                 break;
             case PERDEU:
                 sprintf(derrota, "Voce perdeu!");
-                // PrintText(0.1, 0.1, derrota, 0.0, 1.0, 0.0);
+                PrintText(0.5, 0.5, derrota, 0.0, 1.0, 0.0);
         }
     glPopMatrix();
 }
 
 void Jogo::minimapa() {
     this->arena->desenha2d();
-
-    for(int i = 0; i < obstaculos->size(); i++) {
-        (*(this->obstaculos))[i].desenha2d();
-    }
-
     if(this->status != PERDEU)
         this->jogador->desenha2d();
 
     for(int i = 0; i < inimigos->size(); i++) {
         (*(this->inimigos))[i].desenha2d();
+    }
+    for(int i = 0; i < obstaculos->size(); i++) {
+        (*(this->obstaculos))[i].desenha2d();
     }
 }
 

@@ -67,10 +67,21 @@ void Inimigo::desenha3d() {
 
         // Desenhando as pernas
         glPushMatrix();
-            glTranslatef(r*legRM, 0.0, 0.0);
-            desenhaCilindro(r*legRM, r*legHM, 0.15, 0.0, 0.0);
-            glTranslatef(-2.0*(r*legRM), 0.0, 0.0);
-            desenhaCilindro(r*legRM, r*legHM, 0.15, 0.0, 0.0);
+            glTranslatef(r*legRM, 0.0, r*legHM);
+            glRotatef(this->legAngle, 1,0,0);
+            desenhaCilindro(r*legRM, -r*legHM/2, 0.15, 0.0, 0.0);
+            glTranslatef(0.0, 0.0, -r*legHM/2);
+            glRotatef(-fabs(this->legAngle), 1,0,0);
+            desenhaCilindro(r*legRM, -r*legHM/2, 0.15, 0.0, 0.0);
+        glPopMatrix();
+
+        glPushMatrix();
+            glTranslatef(-(r*legRM), 0.0, r*legHM);
+            glRotatef(-this->legAngle, 1,0,0);
+            desenhaCilindro(r*legRM, -r*legHM/2, 0.15, 0.0, 0.0);
+            glTranslatef(0.0, 0.0, -r*legHM/2);
+            glRotatef(-fabs(this->legAngle), 1,0,0);
+            desenhaCilindro(r*legRM, -r*legHM/2, 0.15, 0.0, 0.0);
         glPopMatrix();
 
         // Desenhando o tronco
