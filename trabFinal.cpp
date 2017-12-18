@@ -55,9 +55,9 @@ GLfloat freqTiroInimigo;
 
 GLfloat alturaObst;
 
-void renderScene(void) {
+void renderScene(int braco) {
 
-    jogo->desenha();
+    jogo->desenha(braco);
 
 }
 
@@ -68,12 +68,11 @@ void renderMinimap(void) {
 void display(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
     // parte de cima - Visao do Jogador
     glMatrixMode(GL_PROJECTION);
     glViewport(0,WindowWidth, WindowWidth, 200);
     glLoadIdentity();
-    gluPerspective(camAngle, WindowWidth/200, (ViewingYMax - ViewingYMin)/100, (ViewingYMax - ViewingYMin)*5.0);
+    gluPerspective(camAngle, WindowWidth/200, (ViewingYMax - ViewingYMin)/1000, (ViewingYMax - ViewingYMin)*50.0);
 
     GLfloat recuo = jogador->getR();
     GLfloat ang = jogador->getFront();
@@ -83,14 +82,14 @@ void display(void) {
     glMatrixMode(GL_MODELVIEW);
 
 
-    renderScene(); // desenha mundo
+    renderScene(0); // desenha mundo
 
 
     // parte de baixo - Visao das Camera
     glMatrixMode(GL_PROJECTION);
     glViewport(0,0, WindowWidth, WindowWidth);
     glLoadIdentity();
-    gluPerspective(camAngle, 1.0, (ViewingYMax - ViewingYMin)/100, (ViewingYMax - ViewingYMin)*5.0);
+    gluPerspective(camAngle, 1.0, (ViewingYMax - ViewingYMin)/1000, (ViewingYMax - ViewingYMin)*50.0);
 
     if (toggleCam == 1){
         // camera sobre a arma
@@ -106,6 +105,7 @@ void display(void) {
             jogador->getX()+recuo*sqrt(2)*sin(front45+angH), jogador->getY()-recuo*sqrt(2)*cos(front45+angH), h+recuo*sqrt(2)*tan(angV),
             0, 0, 1);
     }
+
     if (toggleCam == 2){
         // camera 3a pessoa
         GLfloat recuo = 5*jogador->getR();
@@ -123,7 +123,11 @@ void display(void) {
 
     glMatrixMode(GL_MODELVIEW);
 
-    renderScene(); // desenha mundo
+    if(toggleCam == 2)
+        renderScene(0); // desenha mundo
+    else
+        renderScene(1); // desenha só o braço
+    jogo->mensagem();
 
     // desenha minimapa
     glMatrixMode(GL_PROJECTION);

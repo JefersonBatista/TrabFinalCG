@@ -34,6 +34,7 @@ class Jogador {
         GLfloat getGunV();
         void desenha2d();
         void desenha3d();
+        void desenhaBraco();
         void move(Jogo *jogo, GLfloat delta);
         void rotate(GLfloat delta);
         void changeLegAngle();

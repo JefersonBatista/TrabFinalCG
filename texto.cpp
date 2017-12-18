@@ -7,7 +7,7 @@ void RasterChars(GLfloat x, GLfloat y, GLfloat z, const char * text, double r, d
         glDisable(GL_LIGHTING);
         glDisable(GL_TEXTURE_2D);
         //Draw text in the x, y, z position
-        glColor3f(0,1,0);
+        glColor3f(r,g,b);
         glRasterPos3f(x, y, z);
         const char* tmpStr;
         tmpStr = text;

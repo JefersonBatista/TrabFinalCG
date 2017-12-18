@@ -121,6 +121,25 @@ void Jogador::desenha3d() {
     glPopMatrix();
 }
 
+void Jogador::desenhaBraco() {
+    GLfloat frontDeg = front/(2*M_PI)*360.0;
+    GLfloat gunDeg = this->gun/(2*M_PI)*360.0;
+    GLfloat gunDegV = this->gunV/(2*M_PI)*360.0;
+
+    glPushMatrix();
+        glTranslatef(cx, cy, h);
+        glRotatef(frontDeg, 0.0, 0.0, 1.0);
+
+        glTranslatef(0.0, 0.0, r*legHM);
+        glTranslatef(0.0, 0.0, r*bodyHM);
+        glTranslatef(r*bodyRM, 0.0, 0.0);
+        glRotatef(gunDeg, 0.0, 0.0, 1.0);
+        glRotatef(gunDegV, 1.0, 0.0, 0.0);
+        glRotatef(-90.0, 1.0, 0.0, 0.0);
+        desenhaCilindro(r*armRM, r*armHM, 0.0, 0.5, 0.0);
+    glPopMatrix();
+}
+
 void Jogador::move(Jogo *jogo, GLfloat delta) {
     GLfloat incr = this->vel*delta;
 
@@ -183,7 +202,7 @@ void Jogador::rotate(GLfloat delta) {
 }
 
 void Jogador::changeLegAngle() {
-    this->legAngle = 15*(sin(((cy+cy)/2)*M_PI/45));
+    this->legAngle = 15*(sin(((cx+cy)/2)*M_PI/45));
 }
 
 void Jogador::moveArma(GLfloat angle) {

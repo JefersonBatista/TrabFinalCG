@@ -177,14 +177,8 @@ void Inimigo::rotate(GLfloat delta) {
     if(this->front > 2*M_PI) this->front -= 2*M_PI;
 }
 
-// TODO: Como controlar os ângulos das pernas?
 void Inimigo::changeLegAngle() {
-    unsigned long long tempo = tempo_em_ms(this->lastFootChange);
-    this->legAngle += tempo/100.0;
-    if(this->legAngle > M_PI/4.0) {
-        this->legAngle -= M_PI/2.0;
-    }
-    this->lastFootChange = iniciar();
+    this->legAngle = 15*(sin(((cx+cy)/2)*M_PI/45));
 }
 
 void Inimigo::moveArma(GLfloat angle) {

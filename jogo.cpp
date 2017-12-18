@@ -12,7 +12,7 @@ Jogo::Jogo(Arena *arena, Jogador *jogador, vector<Inimigo> *inimigos, vector<Obs
     this->status = JOGANDO;
 }
 
-void Jogo::desenha() {
+void Jogo::desenha(int braco) {
     GLfloat alturaArena = 4.0*this->jogador->getAltura();
     this->arena->desenha3d(alturaArena);
 
@@ -24,26 +24,32 @@ void Jogo::desenha() {
         (*(this->tiros))[i].desenha3d();
     }
 
-    if(this->status != PERDEU)
-        this->jogador->desenha3d();
+    if(this->status != PERDEU) {
+        if(braco)
+            this->jogador->desenhaBraco();
+        else
+            this->jogador->desenha3d();
+    }
 
     for(int i = 0; i < inimigos->size(); i++) {
         (*(this->inimigos))[i].desenha3d();
     }
+}
 
+void Jogo::mensagem() {
     char text[20], vitoria[20], derrota[20];
     sprintf(text, "Pontos: %d", this->pontos);
 
     glPushMatrix();
-        PrintText(0.1, 0.1, text, 0.0, 1.0, 0.0);
+        PrintText(0.01, 0.01, text, 1.0, 1.0, 0.0);
         switch (this->status) {
             case VENCEU:
                 sprintf(vitoria, "Voce venceu!");
-                PrintText(0.5, 0.5, vitoria, 0.0, 1.0, 0.0);
+                PrintText(0.45, 0.5, vitoria, 1.0, 1.0, 0.0);
                 break;
             case PERDEU:
                 sprintf(derrota, "Voce perdeu!");
-                PrintText(0.5, 0.5, derrota, 0.0, 1.0, 0.0);
+                PrintText(0.45, 0.5, derrota, 1.0, 1.0, 0.0);
         }
     glPopMatrix();
 }
