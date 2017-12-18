@@ -24,7 +24,7 @@ using namespace std;
 double camDist=50;
 double camHAngle=0;
 double camVAngle=0;
-int toggleCam = 2;
+int toggleCam = 1;
 int camAngle = 90;
 int lastX = 0;
 int lastY = 0;
@@ -90,15 +90,16 @@ void display(void) {
 
     if (toggleCam == 1){
         // camera sobre a arma
-        GLfloat h = jogador->getR()*2.8 + jogador->getH();
+        GLfloat h = jogador->getAltura()*3.5/5 + jogador->getH();
         GLfloat recuo = jogador->getR();
-        GLfloat front = jogador->getFront();
         GLfloat front90 = jogador->getFront()+90*M_PI/180;
+        GLfloat front45 = front90+45*M_PI/180;
         GLfloat angH = jogador->getGunH() ;
         GLfloat angV = jogador->getGunV();
-
+        if(angH < 0)
+            angH = angH/1.5;
         gluLookAt(jogador->getX()+recuo*sin(front90), jogador->getY()-recuo*cos(front90),h,
-            jogador->getX()-2*recuo*sin(angH + front), jogador->getY()+2*recuo*cos(angH + front), h+2*recuo*cos(angV),
+            jogador->getX()+recuo*sqrt(2)*sin(front45+angH), jogador->getY()-recuo*sqrt(2)*cos(front45+angH), h+recuo*sqrt(2)*tan(angV),
             0, 0, 1);
     }
     if (toggleCam == 2){
