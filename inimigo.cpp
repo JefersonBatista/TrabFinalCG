@@ -91,6 +91,12 @@ void Inimigo::desenha3d() {
         // Desenhando o braço
         glTranslatef(0.0, 0.0, r*bodyHM);
         glPushMatrix();
+            glTranslatef(-r*bodyRM, 0.0, 0.0);
+            glRotatef(15, 0.0, 1.0, 0.0);
+            glRotatef(this->legAngle, 1.0, 0.0, 0.0);
+            desenhaCilindro(r*armRM, -r*armHM, 0.5, 0.0, 0.0);
+        glPopMatrix();
+        glPushMatrix();
             GLfloat gunDeg = this->gun/(2*M_PI)*360.0;
             glTranslatef(r*bodyRM, 0.0, 0.0);
             glRotatef(gunDeg, 0.0, 0.0, 1.0);

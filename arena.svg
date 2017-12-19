@@ -3,7 +3,7 @@
   <circle
      cx="500"
      cy="500"
-     r="900"
+     r="300"
      fill="blue"
      id="1" />
   <circle
